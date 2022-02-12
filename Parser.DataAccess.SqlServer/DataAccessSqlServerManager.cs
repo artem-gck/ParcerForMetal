@@ -1,0 +1,17 @@
+﻿using Parser.Serviсes.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Parser.DataAccess.SqlServer
+{
+    public class DataAccessSqlServerManager : IDataAccessManager
+    {
+        public async Task<int> AddCertificateAsync(Certificate certificate)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
