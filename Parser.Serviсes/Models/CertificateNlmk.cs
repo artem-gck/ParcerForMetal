@@ -1,5 +1,4 @@
-﻿// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 public class Meta
 {
