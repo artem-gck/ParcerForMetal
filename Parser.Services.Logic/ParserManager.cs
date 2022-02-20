@@ -2,11 +2,6 @@
 using Parser.Services.Logic.ChainOfHosts;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Parser.Services.Logic
 {

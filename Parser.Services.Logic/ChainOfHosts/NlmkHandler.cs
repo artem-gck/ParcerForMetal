@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Parcer.Model;
 using Parser.Serviсes.Models;
 using System;
 using System.Collections.Generic;

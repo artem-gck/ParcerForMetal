@@ -1,4 +1,5 @@
-﻿using Parser.Serviсes.Models;
+﻿using Parcer.Model;
+using Parser.Serviсes.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

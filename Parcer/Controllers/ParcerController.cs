@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
-using System.Diagnostics;
 
 namespace Parcer.Controllers
 {
