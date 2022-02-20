@@ -11,11 +11,11 @@ namespace Parser.Services.Logic.ChainOfHosts
 {
     public class NlmkHandler : Handler
     {
-        private const string Nlmk = "nlmk";
+        private readonly string context = "nlmk";
 
         public override async Task<Certificate> HandleRequestAsync(Uri link)
         {
-            if (link.PathAndQuery.Contains(Nlmk))
+            if (link.PathAndQuery.Contains(context))
             {
                 return await GetCertificateAsync(link);
             }

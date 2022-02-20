@@ -13,11 +13,11 @@ namespace Parser.Services.Logic.ChainOfHosts
 {
     public class MetinvestHandler : Handler
     {
-        private const string Nlmk = "metinvest";
+        private readonly string context = "metinvest";
 
         public override async Task<Certificate> HandleRequestAsync(Uri link)
         {
-            if (link.PathAndQuery.Contains(Nlmk))
+            if (link.PathAndQuery.Contains(context))
             {
                 return await GetCertificateAsync(link);
             }

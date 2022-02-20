@@ -17,6 +17,9 @@ namespace Parser.Services.Logic
             var uri = new Uri(link.Link);
 
             Handler nlmkHandler = new NlmkHandler();
+            Handler metinvestHandler = new MetinvestHandler();
+            nlmkHandler.Successor = metinvestHandler;
+
             var certificate = await nlmkHandler.HandleRequestAsync(uri);
 
             var id = await _access.AddCertificateAsync(certificate);
