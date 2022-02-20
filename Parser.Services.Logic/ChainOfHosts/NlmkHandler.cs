@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Parcer.Model;
 using Parser.Serviсes.Models;
+using Parser.Serviсes.Models.NlmkJson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
