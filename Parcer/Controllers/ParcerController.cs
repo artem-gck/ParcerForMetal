@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Parcer.Model;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
 
@@ -13,16 +14,20 @@ namespace Parcer.Controllers
             => _service = service;
 
         [HttpPost]
-        public async Task<IActionResult> Create(CertificateLink link)
+        public async Task<IActionResult> CreateAsync([FromBody] CertificateLink certificateLink)
         {
-            if (link is null)
+            if (certificateLink is null)
             {
                 return NoContent();
             }
 
-            var id = await _service.CreateCertificateAsync(link);
+            var id = await _service.CreateCertificateAsync(certificateLink);
 
-            return CreatedAtAction(nameof(Create), id);
+            return CreatedAtAction(nameof(CreateAsync), id);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Certificate>> GetAsunc(int id)
+            => await _service.GetCertificateAsync(id);
     }
 }

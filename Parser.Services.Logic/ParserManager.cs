@@ -1,4 +1,5 @@
-﻿using Parser.DataAccess;
+﻿using Parcer.Model;
+using Parser.DataAccess;
 using Parser.Services.Logic.ChainOfHosts;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
@@ -26,5 +27,8 @@ namespace Parser.Services.Logic
 
             return id;
         }
+
+        public async Task<Certificate> GetCertificateAsync(int id)
+            => await _access.GetCertificateAsync(id);
     }
 }

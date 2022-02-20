@@ -14,5 +14,10 @@ namespace Parser.DataAccess.SqlServer
         {
             throw new NotImplementedException();
         }
+
+        public async Task<Certificate> GetCertificateAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

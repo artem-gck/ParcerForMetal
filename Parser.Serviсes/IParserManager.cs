@@ -1,4 +1,5 @@
-﻿using Parser.Serviсes.Models;
+﻿using Parcer.Model;
+using Parser.Serviсes.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Parser.Serviсes
     public interface IParserManager
     {
         public Task<int> CreateCertificateAsync(CertificateLink link);
+        public Task<Certificate> GetCertificateAsync(int id);
     }
 }

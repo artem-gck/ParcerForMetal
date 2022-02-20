@@ -11,5 +11,6 @@ namespace Parser.DataAccess
     public interface IDataAccessManager
     {
         public Task<int> AddCertificateAsync(Certificate certificate);
+        public Task<Certificate> GetCertificateAsync(int id);
     }
 }

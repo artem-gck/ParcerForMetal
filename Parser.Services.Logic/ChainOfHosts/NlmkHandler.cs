@@ -15,7 +15,7 @@ namespace Parser.Services.Logic.ChainOfHosts
 
         public override async Task<Certificate> HandleRequestAsync(Uri link)
         {
-            if (link.PathAndQuery.Contains(context))
+            if (link.AbsoluteUri.Contains(context))
             {
                 return await GetCertificateAsync(link);
             }
