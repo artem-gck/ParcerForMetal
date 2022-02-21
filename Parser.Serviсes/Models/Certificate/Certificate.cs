@@ -9,6 +9,7 @@ namespace Parcer.Model
     public class Certificate
     {
         public int CertificateId { get; set; }
+        public string? Link { get; set; }
         public string? Number { get; set; }
         public DateTime? Date { get; set; }
         public string? Author { get; set; }

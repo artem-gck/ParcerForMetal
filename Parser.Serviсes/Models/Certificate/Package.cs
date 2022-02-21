@@ -18,6 +18,7 @@ namespace Parcer.Model
         public Size? Size { get; set; }
         public int? Quantity { get; set; }
         public string? Variety { get; set; }
+        public string? Gost { get; set; }
         public Weight? Weight { get; set; }
         public int? CustomerItemNumber { get; set; }
         public string? Treatment { get; set; }
@@ -52,6 +53,11 @@ namespace Parcer.Model
         public string? TestingMethod { get; set; }
         public string? UnitTemporaryResistance { get; set; }
         public string? UnitYieldStrength { get; set; }
+        public double? SphericalHoleDepth { get; set; }
+        public double? MicroBallCem { get; set; }
+        public double? R90 { get; set; }
+        public double? N90 { get; set; }
+        public double? KoafNavodorag { get; set; }
         public string? Notes { get; set; }
     }
 }

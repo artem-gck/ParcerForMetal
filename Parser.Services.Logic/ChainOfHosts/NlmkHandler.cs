@@ -44,15 +44,8 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             var page = await _httpClient.GetAsync($"{identyOfCertificate[2..]}?lang=ru");
             var bodyOfPage = await page.Content.ReadAsStringAsync();
-            var myDeserializedClass = JsonConvert.DeserializeObject<Root>(bodyOfPage);
+            var root = JsonConvert.DeserializeObject<Root>(bodyOfPage);
 
-            var certificate = GetSertificate(myDeserializedClass);
-
-            return certificate;
-        }
-
-        private static Certificate GetSertificate(Root root)
-        {
             var certificate = new Certificate();
 
             certificate.Number = root.Elements[1].Elements[0].Value.ToString()[13..19];
@@ -64,9 +57,15 @@ namespace Parser.Services.Logic.ChainOfHosts
             certificate.OrderNumber = root.Elements[1].Elements[0].Value.ToString()[43..];
             certificate.TypeOfRollingStock = root.Elements[5].Elements[2].Value.ToString();
             certificate.Notes = root.Elements[5].Elements[3].Value.ToString();
-            var size = GetSize(root, 0);
-            var weight = GetWeight(root, 0);
-            var chemical = GetChemicalComposition(root, 0);
+            certificate.Packages = new List<Package>();
+
+            for (var i = 0; i < root.Elements[4].Elements[0].Elements[0].Body.Count; i++)
+            {
+                certificate.Packages.Add(GetPackage(root, i));
+            }
+
+            certificate.Link = link.AbsoluteUri;
+
             return certificate;
         }
 
@@ -77,6 +76,34 @@ namespace Parser.Services.Logic.ChainOfHosts
             product.Name = root.Elements[1].Elements[1].Value.ToString();
 
             return product;
+        }
+
+        private static Package GetPackage(Root root, int id)
+        {
+            var package = new Package();
+
+            package.NamberConsignmentPackage = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[1];
+            package.Heat = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[2];
+            package.Batch = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[0];
+            package.Grade = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[6];
+            package.Size = GetSize(root, id);
+            package.Quantity = int.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[9]);
+            package.Variety = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[3];
+            package.Gost = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[14];
+            package.Weight = GetWeight(root, id);
+            package.SurfaceQuality = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[3];
+            package.CategoryOfDrawing = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[6];
+            package.TrimOfEdge = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[5];
+            package.ChemicalComposition = GetChemicalComposition(root, id);
+            package.TemporalResistance = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[8], CultureInfo.InvariantCulture);
+            package.Elongation = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[9], CultureInfo.InvariantCulture);
+            package.SphericalHoleDepth = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[10], CultureInfo.CurrentCulture);
+            package.MicroBallCem = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[15], CultureInfo.InvariantCulture);
+            package.R90 = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[17], CultureInfo.InvariantCulture);
+            package.N90 = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[18], CultureInfo.InvariantCulture);
+            package.KoafNavodorag = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[19], CultureInfo.InvariantCulture);
+
+            return package;
         }
 
         private static Size GetSize(Root root, int id)

@@ -39,15 +39,12 @@ namespace Parser.Services.Logic.ChainOfHosts
             var document = parser.ParseDocument(b);
 
             var certificate = new Certificate();
-            var product = new Product();
 
             certificate.Number = GetElemets(document, "name_doc").FirstOrDefault()[47..58];
             certificate.Date = DateTime.Parse(GetElemets(document, "name_doc").FirstOrDefault()[68..78]);
             certificate.Author = GetElemets(document, "title_ru_en").FirstOrDefault();
             certificate.Recipient = GetElemets(document, "npot_ru_en").FirstOrDefault();
-
             certificate.Product = GetProduct(document);
-
             certificate.WagonNumber = GetElemets(document, "ntr_ru_en").FirstOrDefault();
             certificate.OrderNumber = GetElemets(document, "nsnz_ru_en").FirstOrDefault();
             certificate.TypeOfPackaging = GetElemets(document, "vgrm").FirstOrDefault();
@@ -58,6 +55,8 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             for (var i = 0; i < GetElemets(document, "nssr_03").Count; i++)
                 certificate.Packages.Add(GetPackage(document, 0));
+
+            certificate.Link = link.AbsoluteUri;
 
             return certificate;
         }
@@ -224,21 +223,21 @@ namespace Parser.Services.Logic.ChainOfHosts
             var cev = GetElemets(document, "cev")[id];
             var notes = GetElemets(document, "him_sost_prim")[id];
 
-            chemical.C = c == "" ? null : double.Parse(c, CultureInfo.InvariantCulture);
-            chemical.Mn = mn == "" ? null : double.Parse(mn, CultureInfo.InvariantCulture);
-            chemical.Si = si == "" ? null : double.Parse(si, CultureInfo.InvariantCulture);
-            chemical.S = s == "" ? null : double.Parse(s, CultureInfo.InvariantCulture);
-            chemical.P = p == "" ? null : double.Parse(p, CultureInfo.InvariantCulture);
-            chemical.Cr = cr == "" ? null : double.Parse(cr, CultureInfo.InvariantCulture);
-            chemical.Ni = ni == "" ? null : double.Parse(ni, CultureInfo.InvariantCulture);
-            chemical.Cu = cu == "" ? null : double.Parse(cu, CultureInfo.InvariantCulture);
-            chemical.As = as1 == "" ? null : double.Parse(as1, CultureInfo.InvariantCulture);
-            chemical.N2 = n2 == "" ? null : double.Parse(n2, CultureInfo.InvariantCulture);
-            chemical.Al = al == "" ? null : double.Parse(al, CultureInfo.InvariantCulture);
-            chemical.Ti = ti == "" ? null : double.Parse(ti, CultureInfo.InvariantCulture);
-            chemical.Mo = mo == "" ? null : double.Parse(mo, CultureInfo.InvariantCulture);
-            chemical.W = w == "" ? null : double.Parse(w, CultureInfo.InvariantCulture);
-            chemical.V = v == "" ? null : double.Parse(v, CultureInfo.InvariantCulture);
+            chemical.C = c == "" ? null : double.Parse(c, CultureInfo.InvariantCulture) / 100;
+            chemical.Mn = mn == "" ? null : double.Parse(mn, CultureInfo.InvariantCulture) / 100;
+            chemical.Si = si == "" ? null : double.Parse(si, CultureInfo.InvariantCulture) / 100;
+            chemical.S = s == "" ? null : double.Parse(s, CultureInfo.InvariantCulture) / 1000;
+            chemical.P = p == "" ? null : double.Parse(p, CultureInfo.InvariantCulture) / 1000;
+            chemical.Cr = cr == "" ? null : double.Parse(cr, CultureInfo.InvariantCulture) / 100;
+            chemical.Ni = ni == "" ? null : double.Parse(ni, CultureInfo.InvariantCulture) / 100;
+            chemical.Cu = cu == "" ? null : double.Parse(cu, CultureInfo.InvariantCulture) / 100;
+            chemical.As = as1 == "" ? null : double.Parse(as1, CultureInfo.InvariantCulture) / 100;
+            chemical.N2 = n2 == "" ? null : double.Parse(n2, CultureInfo.InvariantCulture) / 1000;
+            chemical.Al = al == "" ? null : double.Parse(al, CultureInfo.InvariantCulture) / 100;
+            chemical.Ti = ti == "" ? null : double.Parse(ti, CultureInfo.InvariantCulture) / 100;
+            chemical.Mo = mo == "" ? null : double.Parse(mo, CultureInfo.InvariantCulture) / 1000;
+            chemical.W = w == "" ? null : double.Parse(w, CultureInfo.InvariantCulture) / 100;
+            chemical.V = v == "" ? null : double.Parse(v, CultureInfo.InvariantCulture) / 1000;
             chemical.AlWithN2 = aln2 == "" ? null : double.Parse(aln2, CultureInfo.InvariantCulture);
             chemical.Cev = cev == "" ? null : double.Parse(cev, CultureInfo.InvariantCulture);
             chemical.Notes = notes == "" ? null : notes;
