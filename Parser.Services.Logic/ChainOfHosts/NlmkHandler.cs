@@ -66,6 +66,7 @@ namespace Parser.Services.Logic.ChainOfHosts
             certificate.Notes = root.Elements[5].Elements[3].Value.ToString();
             var size = GetSize(root, 0);
             var weight = GetWeight(root, 0);
+            var chemical = GetChemicalComposition(root, 0);
             return certificate;
         }
 
@@ -102,7 +103,18 @@ namespace Parser.Services.Logic.ChainOfHosts
         {
             var chemical = new ChemicalComposition();
 
-
+            chemical.C = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[3], CultureInfo.InvariantCulture);
+            chemical.Si = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[4], CultureInfo.InvariantCulture);
+            chemical.Mn = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[5], CultureInfo.InvariantCulture);
+            chemical.S = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[6], CultureInfo.InvariantCulture);
+            chemical.P = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[7], CultureInfo.InvariantCulture);
+            chemical.Al = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[8], CultureInfo.InvariantCulture);
+            chemical.Cr = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[9], CultureInfo.InvariantCulture);
+            chemical.Ni = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[10], CultureInfo.InvariantCulture);
+            chemical.Cu = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[11], CultureInfo.InvariantCulture);
+            chemical.Ti = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[12], CultureInfo.InvariantCulture);
+            chemical.V = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[14], CultureInfo.InvariantCulture);
+            chemical.N2 = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[15], CultureInfo.InvariantCulture);
 
             return chemical;
         }
