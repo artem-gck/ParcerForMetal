@@ -17,6 +17,7 @@ namespace Parcer.Model
         public string? ShipmentShop { get; set; }
         public string? WagonNumber { get; set; }
         public string? OrderNumber { get; set; }
+        public string? TypeOfRollingStock { get; set; }
         public string? TypeOfPackaging { get; set; }
         public string? PlaceNumber { get; set; }
         public string? Notes { get; set; }

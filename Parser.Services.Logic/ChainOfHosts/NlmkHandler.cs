@@ -41,11 +41,39 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             var identyOfCertificate = link.GetComponents(UriComponents.Query, UriFormat.UriEscaped);
 
-            var a = await _httpClient.GetAsync($"{identyOfCertificate[2..]}?lang=ru");
-            var b = await a.Content.ReadAsStringAsync();
-            var myDeserializedClass = JsonConvert.DeserializeObject<Root>(b);
+            var page = await _httpClient.GetAsync($"{identyOfCertificate[2..]}?lang=ru");
+            var bodyOfPage = await page.Content.ReadAsStringAsync();
+            var myDeserializedClass = JsonConvert.DeserializeObject<Root>(bodyOfPage);
 
-            return null;
+            var certificate = GetSertificate(myDeserializedClass);
+
+            return certificate;
+        }
+
+        private static Certificate GetSertificate(Root root)
+        {
+            var certificate = new Certificate();
+
+            certificate.Number = root.Elements[1].Elements[0].Value.ToString()[13..19];
+            certificate.Date = DateTime.Parse(root.Elements[1].Elements[0].Value.ToString()[22..33]);
+            certificate.WagonNumber = root.Elements[5].Elements[1].Value.ToString();
+            certificate.Product = GetProduct(root);
+            certificate.ShipmentShop = root.Elements[5].Elements[0].Value.ToString();
+            certificate.WagonNumber = root.Elements[5].Elements[1].Value.ToString();
+            certificate.OrderNumber = root.Elements[1].Elements[0].Value.ToString()[43..];
+            certificate.TypeOfRollingStock = root.Elements[5].Elements[2].Value.ToString();
+            certificate.Notes = root.Elements[5].Elements[3].Value.ToString();
+
+            return certificate;
+        }
+
+        private static Product GetProduct(Root root)
+        {
+            var product = new Product();
+
+            product.Name = root.Elements[1].Elements[1].Value.ToString();
+
+            return product;
         }
     }
 }
