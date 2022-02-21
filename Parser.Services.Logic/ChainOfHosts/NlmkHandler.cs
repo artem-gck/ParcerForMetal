@@ -4,6 +4,7 @@ using Parser.Serviсes.Models;
 using Parser.Serviсes.Models.NlmkJson;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,8 @@ namespace Parser.Services.Logic.ChainOfHosts
             certificate.OrderNumber = root.Elements[1].Elements[0].Value.ToString()[43..];
             certificate.TypeOfRollingStock = root.Elements[5].Elements[2].Value.ToString();
             certificate.Notes = root.Elements[5].Elements[3].Value.ToString();
-
+            var size = GetSize(root, 0);
+            var weight = GetWeight(root, 0);
             return certificate;
         }
 
@@ -74,6 +76,35 @@ namespace Parser.Services.Logic.ChainOfHosts
             product.Name = root.Elements[1].Elements[1].Value.ToString();
 
             return product;
+        }
+
+        private static Size GetSize(Root root, int id)
+        {
+            var size = new Size();
+
+            size.Width = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[8][7..], CultureInfo.InvariantCulture);
+            size.Thickness = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[8][..4], CultureInfo.InvariantCulture);
+
+            return size;
+        }
+
+        private static Weight GetWeight(Root root, int id)
+        {
+            var weight = new Weight();
+
+            weight.Gross = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[11], CultureInfo.InvariantCulture);
+            weight.Net = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[10], CultureInfo.InvariantCulture);
+
+            return weight;
+        }
+
+        private static ChemicalComposition GetChemicalComposition(Root root, int id)
+        {
+            var chemical = new ChemicalComposition();
+
+
+
+            return chemical;
         }
     }
 }
