@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
+using Newtonsoft.Json;
 using Parcer.Model;
 using Parser.Serviсes.Models;
 using System;
@@ -32,18 +33,22 @@ namespace Parser.Services.Logic.ChainOfHosts
         private async Task<Certificate> GetCertificateAsync(Uri link)
         {
             using var _httpClient = new HttpClient();
-            var a = await _httpClient.GetAsync("https://metinvest.io/qc/1/1/602680/2272230252");
-            var b = await a.Content.ReadAsStringAsync();
+            var page = await _httpClient.GetAsync(link);
+            var pageContext = await page.Content.ReadAsStringAsync();
 
             var parser = new HtmlParser();
-            var document = parser.ParseDocument(b);
+            var document = parser.ParseDocument(pageContext);
 
             var certificate = new Certificate();
 
             certificate.Number = GetElemets(document, "name_doc").FirstOrDefault()[47..58];
             certificate.Date = DateTime.Parse(GetElemets(document, "name_doc").FirstOrDefault()[68..78]);
             certificate.Author = GetElemets(document, "title_ru_en").FirstOrDefault();
+            certificate.AuthorAddress = GetElemets(document, "adres_ru_en").FirstOrDefault();
+            certificate.Fax = GetElemets(document, "fax").FirstOrDefault();
             certificate.Recipient = GetElemets(document, "npot_ru_en").FirstOrDefault();
+            certificate.RecipientCountry = GetElemets(document, "cntr_ru_en").FirstOrDefault();
+            certificate.Contract = GetElemets(document, "nrvr_ru_en").FirstOrDefault();
             certificate.Product = GetProduct(document);
             certificate.WagonNumber = GetElemets(document, "ntr_ru_en").FirstOrDefault();
             certificate.OrderNumber = GetElemets(document, "nsnz_ru_en").FirstOrDefault();
@@ -57,6 +62,8 @@ namespace Parser.Services.Logic.ChainOfHosts
                 certificate.Packages.Add(GetPackage(document, 0));
 
             certificate.Link = link.AbsoluteUri;
+
+            var json = JsonConvert.SerializeObject(certificate);
 
             return certificate;
         }

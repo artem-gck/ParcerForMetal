@@ -19,7 +19,9 @@ namespace Parser.Services.Logic
 
             Handler nlmkHandler = new NlmkHandler();
             Handler metinvestHandler = new MetinvestHandler();
+            Handler severstalHandler = new SeverstalHandler();
             nlmkHandler.Successor = metinvestHandler;
+            metinvestHandler.Successor = severstalHandler;
 
             var certificate = await nlmkHandler.HandleRequestAsync(uri);
 
