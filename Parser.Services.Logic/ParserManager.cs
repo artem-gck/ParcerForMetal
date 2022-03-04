@@ -1,8 +1,8 @@
-﻿using Parcer.Model;
-using Parser.DataAccess;
+﻿using Parser.DataAccess;
 using Parser.Services.Logic.ChainOfHosts;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
+using Parser.Serviсes.Models.Certificate;
 
 namespace Parser.Services.Logic
 {

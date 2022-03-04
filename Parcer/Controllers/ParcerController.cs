@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parcer.Model;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
+using Parser.Serviсes.Models.Certificate;
 
 namespace Parcer.Controllers
 {

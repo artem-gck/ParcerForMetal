@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using Parcer.Model;
+using Parser.Serviсes.Models.Certificate;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,19 +38,93 @@ namespace Parser.Services.Logic.ChainOfHosts
             var parser = new HtmlParser();
             var document = parser.ParseDocument(b);
 
-            var number = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
-            var date = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[3].Trim();
-            var recipient = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("ГРУЗОПОЛУЧАТЕЛЬ, АДРЕС")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
-            var specificationNumber = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("СПЕЦИФИКАЦИЯ №")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
-            var recipientCountry = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("СТРАНА НАЗНАЧЕНИЯ")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
-            var gosts = document.QuerySelectorAll("td").Where(element => element.Text().Contains("ГОСТ")).Select(element => element.Text()).Last().Trim();
-            var typeOfPackaging = document.QuerySelectorAll("tbody").Where(element => element.Text().Contains("НАИМЕНОВАНИЕ И КОД ТОВАРА")).Last().Children.Last().Children.First().Children.First().Children.First().Children.First().Text().Trim();
+            var countOfPackages = document.QuerySelectorAll("tbody")
+                                 .Where(element => element.Text().Contains("№ П/П"))
+                                 .Last().GetElementsByTagName("tr")
+                                        .Count() - 1;
 
-            var c = GetChemicalComposition(document);
-            var s = GetSize(document, 0);
-            var w = GetWeight(document, 0);
+            var certificate = new Certificate();
 
-            return null;
+            certificate.Number = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
+            certificate.Date = DateTime.Parse(document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[3].Trim());
+            certificate.Recipient = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("ГРУЗОПОЛУЧАТЕЛЬ, АДРЕС")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
+            certificate.SpecificationNumber = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("СПЕЦИФИКАЦИЯ №")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
+            certificate.RecipientCountry = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("СТРАНА НАЗНАЧЕНИЯ")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
+            certificate.Gosts = document.QuerySelectorAll("td").Where(element => element.Text().Contains("ГОСТ")).Select(element => element.Text()).Last().Trim();
+            certificate.TypeOfPackaging = document.QuerySelectorAll("tbody").Where(element => element.Text().Contains("НАИМЕНОВАНИЕ И КОД ТОВАРА")).Last().Children.Last().Children.First().Children.First().Children.First().Children.First().Text().Trim();
+            certificate.Notes = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Примечания")).Last().GetElementsByTagName("td").Last().Text().Trim();
+            certificate.Product = GetProduct(document);
+
+            certificate.Packages = new List<Package>();
+
+            for (var i = 0; i < countOfPackages; i++)
+                certificate.Packages.Add(GetPackage(document, i));
+
+            return certificate;
+        }
+
+        private static Product GetProduct(IHtmlDocument document)
+        {
+            var product = new Product();
+
+            var access = document.QuerySelectorAll("tbody").Where(element => element.Text().Contains("НАИМЕНОВАНИЕ И КОД ТОВАРА")).Last().GetElementsByTagName("tr").ToArray()[1].GetElementsByTagName("td").Select(element => element.Text()).First().Trim();
+
+            product.Name = string.IsNullOrWhiteSpace(access) ? null : access;
+
+            return product;
+        }
+
+        private static Package GetPackage(IHtmlDocument document, int id)
+        {
+            var package = new Package();
+
+            var access = document.QuerySelectorAll("tbody")
+                                 .Where(element => element.Text().Contains("№ П/П"))
+                                 .Last().GetElementsByTagName("tr")
+                                        .ToArray()[id + 1].GetElementsByTagName("td")
+                                               .Select(element => element.Text())
+                                               .ToArray();
+
+            var accessMech = document.QuerySelectorAll("tbody")
+                                 .Where(element => element.Text().Contains("Предел текучести"))
+                                 .Last().GetElementsByTagName("tr")
+                                        .Last().GetElementsByTagName("td")
+                                               .Select(element => element.Text())
+                                               .ToArray();
+
+            var orderPosition = string.IsNullOrWhiteSpace(access[7]) ? null : access[7];
+            var count = string.IsNullOrWhiteSpace(access[29]) ? null : access[29];
+            var elongation = string.IsNullOrWhiteSpace(accessMech[3]) ? null : accessMech[3];
+            var sphericalHoleDepth = string.IsNullOrWhiteSpace(accessMech[7]) ? null : accessMech[7];
+
+
+            package.NamberConsignmentPackage = string.IsNullOrWhiteSpace(access[4]) ? null : access[4];
+            package.Heat = string.IsNullOrWhiteSpace(access[5]) ? null : access[5];
+            package.Batch = string.IsNullOrWhiteSpace(access[6]) ? null : access[6];
+            package.OrderPosition = orderPosition is null ? null : int.Parse(orderPosition);
+            package.Quantity = count is null ? null : int.Parse(count);
+            package.NumberOfClientMaterial = string.IsNullOrWhiteSpace(access[20]) ? null : access[20];
+            package.Category = string.IsNullOrWhiteSpace(access[25]) ? null : access[25];
+            package.SerialNumber = string.IsNullOrWhiteSpace(access[27]) ? null : access[27];
+            package.Grade = string.IsNullOrWhiteSpace(access[28]) ? null : access[28];
+            package.StrengthGroup = string.IsNullOrWhiteSpace(access[41]) ? null : access[41];
+            package.Profile = string.IsNullOrWhiteSpace(access[30]) ? null : access[30];
+            package.Barcode = string.IsNullOrWhiteSpace(access[31]) ? null : access[31];
+            package.TrimOfEdge = string.IsNullOrWhiteSpace(access[37]) ? null : access[37];
+            package.Flatness = string.IsNullOrWhiteSpace(access[35]) ? null : access[35];
+            package.YieldPoint = string.IsNullOrWhiteSpace(accessMech[1]) ? null : accessMech[1];
+            package.TensilePoint = string.IsNullOrWhiteSpace(accessMech[2]) ? null : accessMech[2];
+            package.Elongation = elongation is null ? null : double.Parse(elongation, CultureInfo.InvariantCulture);
+            package.Rockwell = string.IsNullOrWhiteSpace(accessMech[4]) ? null : accessMech[4];
+            package.GrainSize = string.IsNullOrWhiteSpace(accessMech[5]) ? null : accessMech[5];
+            package.Cementite = string.IsNullOrWhiteSpace(accessMech[6]) ? null : accessMech[6];
+            package.SphericalHoleDepth = sphericalHoleDepth is null ? null : double.Parse(sphericalHoleDepth, CultureInfo.InvariantCulture);
+
+            package.ChemicalComposition = GetChemicalComposition(document);
+            package.Size = GetSize(document, id);
+            package.Weight = GetWeight(document, id);
+
+            return package;
         }
 
         private static ChemicalComposition GetChemicalComposition(IHtmlDocument document, int id = 0)
@@ -85,8 +159,8 @@ namespace Parser.Services.Logic.ChainOfHosts
                                                .Select(element => element.Text())
                                                .ToArray();
 
-            size.Width = string.IsNullOrWhiteSpace(access[11]) ? null : double.Parse(access[11], CultureInfo.InvariantCulture);
-            size.Thickness = string.IsNullOrWhiteSpace(access[9]) ? null : double.Parse(access[23], CultureInfo.InvariantCulture);
+            size.Width = string.IsNullOrWhiteSpace(access[21]) ? null : double.Parse(access[21][8..], CultureInfo.InvariantCulture);
+            size.Thickness = string.IsNullOrWhiteSpace(access[21]) ? null : double.Parse(access[21][..5], CultureInfo.InvariantCulture);
             size.Length = string.IsNullOrWhiteSpace(access[11]) ? null : access[11];
 
             return size;

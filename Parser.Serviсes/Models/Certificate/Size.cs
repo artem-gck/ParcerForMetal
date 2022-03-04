@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Parcer.Model
+namespace Parser.Serviсes.Models.Certificate
 {
     public class Size
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Parcer.Model
+namespace Parser.Serviсes.Models.Certificate
 {
     public class Package
     {
@@ -12,9 +12,14 @@ namespace Parcer.Model
         public string? NamberConsignmentPackage { get; set; }
         public string? Heat { get; set; }
         public string? Batch { get; set; }
+        public int? OrderPosition { get; set; }
+        public string? NumberOfClientMaterial { get; set; }
+        public string? SerialNumber { get; set; }
         public string? Grade { get; set; }
         public string? Category { get; set; }
         public string? StrengthGroup { get; set; }
+        public string? Profile { get; set; }
+        public string? Barcode { get; set; }
         public Size? Size { get; set; }
         public int? Quantity { get; set; }
         public string? Variety { get; set; }
@@ -38,6 +43,7 @@ namespace Parcer.Model
         public string? DirectOfTestPicses { get; set; }
         public double? TemporalResistance { get; set; }
         public string? YieldPoint { get; set; }
+        public string? TensilePoint { get; set; }
         public double? Elongation { get; set; }
         public string? Bend { get; set; }
         public string? Hardness { get; set; }

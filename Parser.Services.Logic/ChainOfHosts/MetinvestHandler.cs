@@ -1,8 +1,8 @@
 ﻿using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using Newtonsoft.Json;
-using Parcer.Model;
 using Parser.Serviсes.Models;
+using Parser.Serviсes.Models.Certificate;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -67,9 +67,6 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             return certificate;
         }
-
-        private static List<string> GetElemets(IHtmlDocument doc, string tag)
-           => doc.QuerySelectorAll(tag).Select(element => element.TextContent).ToList();
 
         private static Product GetProduct(IHtmlDocument document)
         {
@@ -272,5 +269,8 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             return strength;
         }
+
+        private static List<string> GetElemets(IHtmlDocument doc, string tag)
+   => doc.QuerySelectorAll(tag).Select(element => element.TextContent).ToList();
     }
 }
