@@ -2,7 +2,7 @@
 using AngleSharp.Html.Parser;
 using Newtonsoft.Json;
 using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,6 +41,7 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             var certificate = new Certificate();
 
+            certificate.Link = link.AbsoluteUri;
             certificate.Number = GetElemets(document, "name_doc").FirstOrDefault()[47..58];
             certificate.Date = DateTime.Parse(GetElemets(document, "name_doc").FirstOrDefault()[68..78]);
             certificate.Author = GetElemets(document, "title_ru_en").FirstOrDefault();

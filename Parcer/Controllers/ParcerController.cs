@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 
 namespace Parcer.Controllers
 {
@@ -29,5 +29,9 @@ namespace Parcer.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Certificate>> GetAsunc(int id)
             => await _service.GetCertificateAsync(id);
+
+        [HttpGet]
+        public async Task<ActionResult<List<Certificate>>> GetAllAsunc()
+            => await _service.GetAllCertificatesAsync();
     }
 }

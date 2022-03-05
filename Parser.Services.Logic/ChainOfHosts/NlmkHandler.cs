@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 using Parser.Serviсes.Models.NlmkJson;
 using System;
 using System.Collections.Generic;
@@ -48,6 +48,7 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             var certificate = new Certificate();
 
+            certificate.Link = link.AbsoluteUri;
             certificate.Number = root.Elements[1].Elements[0].Value.ToString()[13..19];
             certificate.Date = DateTime.Parse(root.Elements[1].Elements[0].Value.ToString()[22..33]);
             certificate.WagonNumber = root.Elements[5].Elements[1].Value.ToString();
@@ -63,8 +64,6 @@ namespace Parser.Services.Logic.ChainOfHosts
             {
                 certificate.Packages.Add(GetPackage(root, i));
             }
-
-            certificate.Link = link.AbsoluteUri;
 
             return certificate;
         }

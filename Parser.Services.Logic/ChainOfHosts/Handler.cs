@@ -1,5 +1,5 @@
 ﻿using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

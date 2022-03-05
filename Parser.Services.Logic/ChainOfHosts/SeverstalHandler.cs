@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -45,6 +45,7 @@ namespace Parser.Services.Logic.ChainOfHosts
 
             var certificate = new Certificate();
 
+            certificate.Link = link.AbsoluteUri;
             certificate.Number = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();
             certificate.Date = DateTime.Parse(document.QuerySelectorAll("tr").Where(element => element.Text().Contains("Сертификат №:")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[3].Trim());
             certificate.Recipient = document.QuerySelectorAll("tr").Where(element => element.Text().Contains("ГРУЗОПОЛУЧАТЕЛЬ, АДРЕС")).Last().GetElementsByTagName("td").Select(element => element.Text()).ToList()[1].Trim();

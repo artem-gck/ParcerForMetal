@@ -1,5 +1,5 @@
 ﻿using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +12,6 @@ namespace Parser.DataAccess
     {
         public Task<int> AddCertificateAsync(Certificate certificate);
         public Task<Certificate> GetCertificateAsync(int id);
+        public Task<List<Certificate>> GetAllCertificatesAsync();
     }
 }

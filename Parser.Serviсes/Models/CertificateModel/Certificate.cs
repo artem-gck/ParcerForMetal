@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Parser.Serviсes.Models.Certificate
+namespace Parser.Serviсes.Models.CertificateModel
 {
     public class Certificate
     {
         public int CertificateId { get; set; }
-        public string? Link { get; set; }
+        public string Link { get; set; }
         public string? Number { get; set; }
         public DateTime? Date { get; set; }
         public string? Author { get; set; }

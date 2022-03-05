@@ -2,7 +2,7 @@
 using Parser.Services.Logic.ChainOfHosts;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
-using Parser.Serviсes.Models.Certificate;
+using Parser.Serviсes.Models.CertificateModel;
 
 namespace Parser.Services.Logic
 {
@@ -29,6 +29,9 @@ namespace Parser.Services.Logic
 
             return id;
         }
+
+        public async Task<List<Certificate>> GetAllCertificatesAsync()
+            => await _access.GetAllCertificatesAsync();
 
         public async Task<Certificate> GetCertificateAsync(int id)
             => await _access.GetCertificateAsync(id);
