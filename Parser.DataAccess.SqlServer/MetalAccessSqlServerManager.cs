@@ -83,6 +83,34 @@ namespace Parser.DataAccess.SqlServer
             return certificate;
         }
 
+        public async Task<int> UpdateSertificateAsync(Certificate certificate)
+        {
+            await UpdateStatus();
+
+            var cert = await _context.Certificate.Include(cert => cert.Product)
+                                                 .Include(cert => cert.Packages)
+                                                     .ThenInclude(pac => pac.Size)
+                                                 .Include(cert => cert.Packages)
+                                                     .ThenInclude(pac => pac.Weight)
+                                                 .Include(cert => cert.Packages)
+                                                     .ThenInclude(pac => pac.ChemicalComposition)
+                                                 .Include(cert => cert.Packages)
+                                                     .ThenInclude(pac => pac.ImpactStrength)
+                                                 .Include(cert => cert.Packages)
+                                                     .ThenInclude(pac => pac.Status)
+                                                 .Where(cert => cert.CertificateId == certificate.CertificateId).FirstOrDefaultAsync();
+
+            for (var i = 0; i < certificate.Packages.Count(); i++)
+            {
+                cert.Packages[i].Weight.Net = certificate.Packages[i].Weight.Net;
+                cert.Packages[i].Size.Thickness = certificate.Packages[i].Size.Thickness;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return certificate.CertificateId;
+        }
+
         public async Task<List<Package>> GetAllPackegesAsync()
         {
             await UpdateStatus();

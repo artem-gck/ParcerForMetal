@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Parser.Serviсes\Parser.Serviсes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\NewFolder\" />
+  </ItemGroup>
+
 </Project>

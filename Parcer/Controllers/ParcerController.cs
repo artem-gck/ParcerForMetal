@@ -40,9 +40,17 @@ namespace Parcer.Controllers
             return CreatedAtAction(nameof(CreateCertificateAsync), id);
         }
 
+        [HttpPut("certificate/{id}")]
+        public async Task<IActionResult> UpdateSertificateAsunc(Certificate certificate)
+        { 
+            var certificateId = await _service.UpdateCertificateAsync(certificate);
+
+            return NoContent();
+        }
+
         [HttpGet("certificate/{id}")]
         public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
-        { 
+        {
             var certificate = await _service.GetCertificateAsync(id);
 
             return certificate is null ? NoContent() : certificate;

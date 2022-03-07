@@ -51,6 +51,9 @@ namespace Parser.Services.Logic
         public async Task<Certificate> GetCertificateAsync(int id)
             => await _access.GetCertificateAsync(id);
 
+        public async Task<int> UpdateCertificateAsync(Certificate certificate)
+            => await _access.UpdateSertificateAsync(certificate);
+
         private PackageViewModel MapPackege(Package package)
             => new PackageViewModel()
             {

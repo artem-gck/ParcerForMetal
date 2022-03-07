@@ -13,6 +13,7 @@ namespace Parser.DataAccess
         public Task<int> AddCertificateAsync(Certificate certificate);
         public Task<Certificate> GetCertificateAsync(int id);
         public Task<List<Certificate>> GetAllCertificatesAsync();
+        public Task<int> UpdateSertificateAsync(Certificate certificate);
         public Task<List<Package>> GetAllPackegesAsync();
     }
 }
