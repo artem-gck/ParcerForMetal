@@ -14,7 +14,14 @@ namespace Parser.Services.Logic
         public MetalManager(IMetalAccessManager access)
             => _access = access;
 
-        public async Task<int> CreateCertificateAsync(CertificateLink link)
+        public async Task<int> CreateCertificateAsync(Certificate certificate)
+        {
+            var id = await _access.AddCertificateAsync(certificate);
+
+            return id;
+        }
+
+        public async Task<int> CreateFromLinkAsync(CertificateLink link)
         {
             var uri = new Uri(link.Link);
 

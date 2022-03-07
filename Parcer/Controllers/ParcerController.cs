@@ -15,16 +15,29 @@ namespace Parcer.Controllers
             => _service = service;
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] CertificateLink certificateLink)
+        public async Task<IActionResult> CreateFromLinkAsync([FromBody] CertificateLink certificateLink)
         {
             if (certificateLink is null)
             {
                 return NoContent();
             }
 
-            var id = await _service.CreateCertificateAsync(certificateLink);
+            var id = await _service.CreateFromLinkAsync(certificateLink);
 
-            return CreatedAtAction(nameof(CreateAsync), id);
+            return CreatedAtAction(nameof(CreateFromLinkAsync), id);
+        }
+
+        [HttpPost("certificate")]
+        public async Task<IActionResult> CreateCertificateAsync([FromBody] Certificate certificate)
+        {
+            if (certificate is null)
+            {
+                return NoContent();
+            }
+
+            var id = await _service.CreateCertificateAsync(certificate);
+
+            return CreatedAtAction(nameof(CreateCertificateAsync), id);
         }
 
         [HttpGet("certificate/{id}")]
