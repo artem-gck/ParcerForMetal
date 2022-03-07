@@ -320,7 +320,7 @@ The REST API to the example app is described below.
     ]
 }
 
-## Get a non-existent Thing
+## Get a non-existent Certificate
 
 ### Request
 
