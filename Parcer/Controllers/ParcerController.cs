@@ -42,7 +42,11 @@ namespace Parcer.Controllers
 
         [HttpGet("certificate/{id}")]
         public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
-            => await _service.GetCertificateAsync(id);
+        { 
+            var certificate = await _service.GetCertificateAsync(id);
+
+            return certificate is null ? NoContent() : certificate;
+        }
 
         [HttpGet("certificate")]
         public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsunc()
