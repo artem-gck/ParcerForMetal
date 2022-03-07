@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Parser.Serviсes.Models.CertificateModel
@@ -9,6 +10,11 @@ namespace Parser.Serviсes.Models.CertificateModel
     public class Package
     {
         public int PackageId { get; set; }
+        [JsonIgnore]
+        public Certificate? Certificate { get; set; }
+        public DateTime? DateAdded { get; set; }
+        public DateTime? DateChange { get; set; }
+        public Status? Status { get; set; }
         public string? NamberConsignmentPackage { get; set; }
         public string? Heat { get; set; }
         public string? Batch { get; set; }
@@ -65,5 +71,7 @@ namespace Parser.Serviсes.Models.CertificateModel
         public double? N90 { get; set; }
         public double? KoafNavodorag { get; set; }
         public string? Notes { get; set; }
+        public byte[]? Photo { get; set; }
+        public string? Comment { get; set; }
     }
 }

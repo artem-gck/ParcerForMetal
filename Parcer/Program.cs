@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddDbContext<MetalContext>(opt =>
-    opt.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MetalManagment;Integrated Security=True;"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IParserManager, ParserManager>();
 builder.Services.AddTransient<IDataAccessManager, DataAccessSqlServerManager>();

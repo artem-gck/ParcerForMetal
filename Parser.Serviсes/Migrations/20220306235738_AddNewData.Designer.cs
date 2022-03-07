@@ -12,8 +12,8 @@ using Parser.Serviсes.Models.Context;
 namespace Parser.Serviсes.Migrations
 {
     [DbContext(typeof(MetalContext))]
-    [Migration("20220304223652_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220306235738_AddNewData")]
+    partial class AddNewData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -51,6 +51,7 @@ namespace Parser.Serviсes.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Link")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Notes")
@@ -232,11 +233,20 @@ namespace Parser.Serviсes.Migrations
                     b.Property<int?>("ChemicalCompositionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Corrosion")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CustomerItemNumber")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("DateAdded")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateChange")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Decarburiization")
                         .HasColumnType("nvarchar(max)");
@@ -301,6 +311,9 @@ namespace Parser.Serviсes.Migrations
                     b.Property<string>("PattemCutting")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Profile")
                         .HasColumnType("nvarchar(max)");
 
@@ -333,6 +346,9 @@ namespace Parser.Serviсes.Migrations
 
                     b.Property<string>("StateOfMatirial")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StatusId")
+                        .HasColumnType("int");
 
                     b.Property<string>("StrengthGroup")
                         .HasColumnType("nvarchar(max)");
@@ -383,6 +399,8 @@ namespace Parser.Serviсes.Migrations
 
                     b.HasIndex("SizeId");
 
+                    b.HasIndex("StatusId");
+
                     b.HasIndex("WeightId");
 
                     b.ToTable("Package");
@@ -432,6 +450,23 @@ namespace Parser.Serviсes.Migrations
                     b.ToTable("Size");
                 });
 
+            modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Status", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"), 1L, 1);
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("Status");
+                });
+
             modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Weight", b =>
                 {
                     b.Property<int>("WeightId")
@@ -465,7 +500,7 @@ namespace Parser.Serviсes.Migrations
 
             modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Package", b =>
                 {
-                    b.HasOne("Parser.Serviсes.Models.CertificateModel.Certificate", null)
+                    b.HasOne("Parser.Serviсes.Models.CertificateModel.Certificate", "Certificate")
                         .WithMany("Packages")
                         .HasForeignKey("CertificateId");
 
@@ -481,9 +516,15 @@ namespace Parser.Serviсes.Migrations
                         .WithMany()
                         .HasForeignKey("SizeId");
 
+                    b.HasOne("Parser.Serviсes.Models.CertificateModel.Status", "Status")
+                        .WithMany("Packages")
+                        .HasForeignKey("StatusId");
+
                     b.HasOne("Parser.Serviсes.Models.CertificateModel.Weight", "Weight")
                         .WithMany()
                         .HasForeignKey("WeightId");
+
+                    b.Navigation("Certificate");
 
                     b.Navigation("ChemicalComposition");
 
@@ -491,10 +532,17 @@ namespace Parser.Serviсes.Migrations
 
                     b.Navigation("Size");
 
+                    b.Navigation("Status");
+
                     b.Navigation("Weight");
                 });
 
             modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Certificate", b =>
+                {
+                    b.Navigation("Packages");
+                });
+
+            modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Status", b =>
                 {
                     b.Navigation("Packages");
                 });

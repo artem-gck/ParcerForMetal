@@ -60,7 +60,7 @@ namespace Parser.Services.Logic.ChainOfHosts
             certificate.Packages = new List<Package>();
 
             for (var i = 0; i < GetElemets(document, "nssr_03").Count; i++)
-                certificate.Packages.Add(GetPackage(document, 0));
+                certificate.Packages.Add(GetPackage(document, i));
 
             certificate.Link = link.AbsoluteUri;
 

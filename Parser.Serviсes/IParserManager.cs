@@ -1,5 +1,6 @@
 ﻿using Parser.Serviсes.Models;
 using Parser.Serviсes.Models.CertificateModel;
+using Parser.Serviсes.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,6 @@ namespace Parser.Serviсes
         public Task<int> CreateCertificateAsync(CertificateLink link);
         public Task<Certificate> GetCertificateAsync(int id);
         public Task<List<Certificate>> GetAllCertificatesAsync();
+        public Task<List<PackageViewModel>> GetAllPackagesAsync();
     }
 }

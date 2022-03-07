@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Parser.Serviсes.Models.CertificateModel
 {
-    public class Weight
+    public class Status
     {
-        public int WeightId { get; set; }
-        public double? Gross { get; set; }
-        public double? Gross2 { get; set; }
-        public double? Net { get; set; }
+        public int StatusId { get; set; }
+        public string StatusName { get; set; }
+        [JsonIgnore]
+        public List<Package> Packages { get; set; } = new List<Package>();
     }
 }

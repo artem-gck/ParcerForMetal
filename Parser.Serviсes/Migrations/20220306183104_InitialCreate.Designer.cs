@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parser.Serviсes.Models.Context;
 
@@ -11,9 +12,10 @@ using Parser.Serviсes.Models.Context;
 namespace Parser.Serviсes.Migrations
 {
     [DbContext(typeof(MetalContext))]
-    partial class MetalContextModelSnapshot : ModelSnapshot
+    [Migration("20220306183104_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -498,7 +500,7 @@ namespace Parser.Serviсes.Migrations
 
             modelBuilder.Entity("Parser.Serviсes.Models.CertificateModel.Package", b =>
                 {
-                    b.HasOne("Parser.Serviсes.Models.CertificateModel.Certificate", "Certificate")
+                    b.HasOne("Parser.Serviсes.Models.CertificateModel.Certificate", null)
                         .WithMany("Packages")
                         .HasForeignKey("CertificateId");
 
@@ -521,8 +523,6 @@ namespace Parser.Serviсes.Migrations
                     b.HasOne("Parser.Serviсes.Models.CertificateModel.Weight", "Weight")
                         .WithMany()
                         .HasForeignKey("WeightId");
-
-                    b.Navigation("Certificate");
 
                     b.Navigation("ChemicalComposition");
 

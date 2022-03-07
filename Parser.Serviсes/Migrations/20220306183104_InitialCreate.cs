@@ -88,6 +88,19 @@ namespace Parser.Serviсes.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Status",
+                columns: table => new
+                {
+                    StatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Status", x => x.StatusId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Weight",
                 columns: table => new
                 {
@@ -108,7 +121,7 @@ namespace Parser.Serviсes.Migrations
                 {
                     CertificateId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Link = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Link = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -144,6 +157,9 @@ namespace Parser.Serviсes.Migrations
                 {
                     PackageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DateAdded = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateChange = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StatusId = table.Column<int>(type: "int", nullable: true),
                     NamberConsignmentPackage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Heat = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Batch = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -200,6 +216,8 @@ namespace Parser.Serviсes.Migrations
                     N90 = table.Column<double>(type: "float", nullable: true),
                     KoafNavodorag = table.Column<double>(type: "float", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Photo = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CertificateId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -225,6 +243,11 @@ namespace Parser.Serviсes.Migrations
                         column: x => x.SizeId,
                         principalTable: "Size",
                         principalColumn: "SizeId");
+                    table.ForeignKey(
+                        name: "FK_Package_Status_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "Status",
+                        principalColumn: "StatusId");
                     table.ForeignKey(
                         name: "FK_Package_Weight_WeightId",
                         column: x => x.WeightId,
@@ -258,6 +281,11 @@ namespace Parser.Serviсes.Migrations
                 column: "SizeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Package_StatusId",
+                table: "Package",
+                column: "StatusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Package_WeightId",
                 table: "Package",
                 column: "WeightId");
@@ -279,6 +307,9 @@ namespace Parser.Serviсes.Migrations
 
             migrationBuilder.DropTable(
                 name: "Size");
+
+            migrationBuilder.DropTable(
+                name: "Status");
 
             migrationBuilder.DropTable(
                 name: "Weight");

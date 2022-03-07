@@ -2,6 +2,7 @@
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
 using Parser.Serviсes.Models.CertificateModel;
+using Parser.Serviсes.ViewModel;
 
 namespace Parcer.Controllers
 {
@@ -26,12 +27,16 @@ namespace Parcer.Controllers
             return CreatedAtAction(nameof(CreateAsync), id);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Certificate>> GetAsunc(int id)
+        [HttpGet("certificate/{id}")]
+        public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
             => await _service.GetCertificateAsync(id);
 
-        [HttpGet]
-        public async Task<ActionResult<List<Certificate>>> GetAllAsunc()
+        [HttpGet("certificate")]
+        public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsunc()
             => await _service.GetAllCertificatesAsync();
+
+        [HttpGet("package")]
+        public async Task<ActionResult<List<PackageViewModel>>> GetAllPackagesAsunc()
+            => await _service.GetAllPackagesAsync();
     }
 }
