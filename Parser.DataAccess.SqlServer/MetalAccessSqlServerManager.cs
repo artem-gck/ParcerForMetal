@@ -13,14 +13,14 @@ using Microsoft.Extensions.Configuration;
 
 namespace Parser.DataAccess.SqlServer
 {
-    public class DataAccessSqlServerManager : IDataAccessManager
+    public class MetalAccessSqlServerManager : IMetalAccessManager
     {
         private readonly int UpdateTimeHours;
         private readonly int UpdateTimeDays;
 
         private MetalContext _context;
 
-        public DataAccessSqlServerManager(MetalContext context, IConfiguration configuration)
+        public MetalAccessSqlServerManager(MetalContext context, IConfiguration configuration)
         {
             _context = context;
             UpdateTimeHours = int.Parse(configuration.GetSection("UpdateTimeHours").Value);

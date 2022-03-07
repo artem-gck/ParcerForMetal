@@ -9,9 +9,9 @@ namespace Parcer.Controllers
     [Route("api/parcer")]
     public class ParcerController : Controller
     {
-        private IParserManager _service;
+        private IMetalManager _service;
 
-        public ParcerController(IParserManager service)
+        public ParcerController(IMetalManager service)
             => _service = service;
 
         [HttpPost]

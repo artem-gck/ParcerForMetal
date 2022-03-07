@@ -7,11 +7,11 @@ using Parser.Serviсes.ViewModel;
 
 namespace Parser.Services.Logic
 {
-    public class ParserManager : IParserManager
+    public class MetalManager : IMetalManager
     {
-        private IDataAccessManager _access;
+        private IMetalAccessManager _access;
 
-        public ParserManager(IDataAccessManager access)
+        public MetalManager(IMetalAccessManager access)
             => _access = access;
 
         public async Task<int> CreateCertificateAsync(CertificateLink link)

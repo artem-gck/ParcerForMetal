@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MetalContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IParserManager, ParserManager>();
-builder.Services.AddTransient<IDataAccessManager, DataAccessSqlServerManager>();
+builder.Services.AddTransient<IMetalManager, MetalManager>();
+builder.Services.AddTransient<IMetalAccessManager, MetalAccessSqlServerManager>();
 
 var app = builder.Build();
 

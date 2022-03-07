@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Parser.Serviсes
 {
-    public interface IParserManager
+    public interface IMetalManager
     {
         public Task<int> CreateCertificateAsync(CertificateLink link);
         public Task<Certificate> GetCertificateAsync(int id);

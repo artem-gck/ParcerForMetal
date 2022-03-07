@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Parser.DataAccess
 {
-    public interface IDataAccessManager
+    public interface IMetalAccessManager
     {
         public Task<int> AddCertificateAsync(Certificate certificate);
         public Task<Certificate> GetCertificateAsync(int id);
