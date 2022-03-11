@@ -13,7 +13,10 @@ builder.Services.AddDbContext<MetalContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IMetalManager, MetalManager>();
+builder.Services.AddTransient<ITokenManager, TokenManager>();
+builder.Services.AddTransient<IAuthManager, AuthManager>();
 builder.Services.AddTransient<IMetalAccessManager, MetalAccessSqlServerManager>();
+builder.Services.AddTransient<ILoginAccessManager, LoginAccessManager>();
 
 var app = builder.Build();
 

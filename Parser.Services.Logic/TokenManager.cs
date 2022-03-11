@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Parser.DataAccess;
+using Parser.Serviсes;
+using Parser.Serviсes.Models;
+
+namespace Parser.Services.Logic
+{
+    public class TokenManager : ITokenManager
+    {
+        private readonly string _key;
+        private readonly ILoginAccessManager _access;
+
+        public TokenManager(ILoginAccessManager access, IConfiguration config)
+        {
+            _access = access;
+            _key = config.GetSection("SecreteKey").Value;
+        }
+
+        public async Task<TokenApiModel> Refresh(TokenApiModel tokenApiModel)
+        {
+            var accessToken = tokenApiModel.AccessToken;
+            var refreshToken = tokenApiModel.RefreshToken;
+
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+            var userName = principal.Identity.Name;
+            var user = await _access.GetUserAsync(userName);
+
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                return null;
+            }
+
+            var newAccessToken = GenerateAccessToken(principal.Claims);
+            var newRefreshToken = GenerateRefreshToken();
+
+            user.RefreshToken = newRefreshToken;
+            await _access.SetNewRefreshKey(user);
+
+            return new TokenApiModel()
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
+        }
+
+        public async Task<bool> CheckAccessKey(string token)
+        {
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(token);
+                var username = principal.Identity.Name;
+                var user = await _access.GetUserAsync(username);
+
+                if (user is not null)
+                    return true;
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string GenerateAccessToken(IEnumerable<Claim> claims)
+        {
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key));
+            var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+            var tokeOptions = new JwtSecurityToken(
+                issuer: "http://localhost:5000",
+                audience: "http://localhost:5000",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(5),
+                signingCredentials: signinCredentials
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+
+            return tokenString;
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_key)),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            
+            return principal;
+        }
+    }
+}
