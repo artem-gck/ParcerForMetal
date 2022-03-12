@@ -11,13 +11,77 @@ The entire application is contained within the `Parcer/Programm.cs` file.
 
 The REST API to the example app is described below.
 
+## Login
+
+### Request
+
+`POST /authentication/login`
+
+    curl -i -H 'Accept: application/json' 
+	http://localhost:44335/authentication/login
+	
+	[
+		{
+		"login":"admin",
+		"password":"admin"
+		}
+	]
+
+### Response
+
+    HTTPS/1.1 200 OK
+    Date: Mon, 07 Mar 2022 10:42:53 GMT
+    Status: 200 OK
+    Connection: close
+    Content-Type: application/json
+
+    [
+		{
+			"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs",
+			"refreshToken": "OCMC7lhdvWkpRF9qIe3bUBM32HZ9w14NDojNVqz2Yzs="
+		}
+	]
+	
+## Refresh AccessToken
+
+### Request
+
+`POST /token/refresh`
+
+    curl -i -H 'Accept: application/json' 
+	http://localhost:44335//token/refresh
+	
+	[
+		{
+			"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs",
+			"refreshToken": "OCMC7lhdvWkpRF9qIe3bUBM32HZ9w14NDojNVqz2Yzs="
+		}
+	]
+
+### Response
+
+    HTTPS/1.1 200 OK
+    Date: Mon, 07 Mar 2022 10:42:53 GMT
+    Status: 200 OK
+    Connection: close
+    Content-Type: application/json
+
+    [
+		{
+			"accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg4NDIzLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOlsiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiaHR0cDovL2xvY2FsaG9zdDo1MDAwIl19.MD-lbQP6hKxbDfqoiwlkzx09-8nkiAvDBy1tJWyAt6I",
+			"refreshToken": "aDG9CvBbdSHXjlv7tqtjasbFNklgEPVtXl8/3zimsoY="
+		}
+	]
+
 ## Get list of Certificats
 
 ### Request
 
 `GET /certificate/`
 
-    curl -i -H 'Accept: application/json' https://localhost:7109/certificate/
+    curl -i -H 'Accept: application/json'
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'
+	https://localhost:44335/certificate/
 
 ### Response
 
@@ -162,7 +226,9 @@ The REST API to the example app is described below.
 
 `POST /`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'
+	http://localhost:44335/
 	
 	{
 		"link":"absolutePath"
@@ -185,13 +251,9 @@ The REST API to the example app is described below.
 
 `POST /`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/certificate
-	
-	    HTTPS/1.1 200 OK
-    Date: Mon, 07 Mar 2022 10:42:53 GMT
-    Status: 200 OK
-    Connection: close
-    Content-Type: application/json
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'
+	http://localhost:44335/certificate
 
 	{
 		"certificateId": 1,
@@ -329,7 +391,11 @@ The REST API to the example app is described below.
     Content-Type: application/json
     Location: Parcer/CreateAsync
 
-    id:1
+	[
+		{
+			id:1
+		}
+	]
 
 ## Get a specific Certificate
 
@@ -337,7 +403,9 @@ The REST API to the example app is described below.
 
 `GET /certificate/id`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/certificate/1
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'	
+	http://localhost:44335/certificate/1
 
 ### Response
 
@@ -480,7 +548,9 @@ The REST API to the example app is described below.
 
 `PUT /certificate/id`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/certificate/1
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'	
+	http://localhost:44335/certificate/1
 
 	{
     "certificateId": 1,
@@ -625,7 +695,9 @@ The REST API to the example app is described below.
 
 `GET /certificate/id`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/certificate/9999
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'	
+	http://localhost:44335/certificate/9999
 
 ### Response
 
@@ -643,7 +715,9 @@ The REST API to the example app is described below.
 
 `GET /package`
 
-    curl -i -H 'Accept: application/json' http://localhost:7109/package
+    curl -i -H 'Accept: application/json' 
+	'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJNYW5hZ2VyIiwiZXhwIjoxNjQ3MDg3MjYxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDAifQ.ydI48GnICfI3L5W1D4Un-et1iJnuZQSKMOaH5dk2exs'	
+	http://localhost:44335/package
 
 ### Response
 

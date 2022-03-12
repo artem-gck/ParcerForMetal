@@ -19,9 +19,9 @@ namespace Parser.Services.Logic
         private readonly string _key;
         private readonly int _liveTimeAccessTokenMinutes;
         private readonly int _liveTimeRefreshTokenHours;
-        private readonly ILoginAccessManager _access;
+        private readonly IAuthAccessManager _access;
 
-        public TokenManager(ILoginAccessManager access, IConfiguration config)
+        public TokenManager(IAuthAccessManager access, IConfiguration config)
         {
             _access = access;
             _key = config.GetSection("SecreteKey").Value;

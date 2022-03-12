@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parser.DataAccess
 {
-    public interface ILoginAccessManager
+    public interface IAuthAccessManager
     {
         public Task<User> AuthUserAsync(string login, string password);
         public Task<User> GetUserAsync(string login);

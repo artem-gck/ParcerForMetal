@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Parser.DataAccess.SqlServer
 {
-    public class LoginAccessManager : ILoginAccessManager
+    public class AuthAccessManager : IAuthAccessManager
     {
         private readonly MetalContext _context;
 
-        public LoginAccessManager(MetalContext metalContext)
+        public AuthAccessManager(MetalContext metalContext)
             => _context = metalContext;
 
         public async Task<User> AuthUserAsync(string login, string password)
@@ -37,7 +37,7 @@ namespace Parser.DataAccess.SqlServer
             var userData = await _context.User.FirstOrDefaultAsync(userData => userData.Login == user.Login);
 
             userData.RefreshToken = user.RefreshToken;
-            userData.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            userData.RefreshTokenExpiryTime = user.RefreshTokenExpiryTime;
 
             await _context.SaveChangesAsync();
 

@@ -14,7 +14,7 @@ namespace Parser.Controllers
         private readonly IAuthManager _service;
 
         public AuthController(IAuthManager service)
-            => this._service = service ?? throw new ArgumentNullException(nameof(service));
+            => _service = service;
 
         [HttpPost, Route("login")]
         public async Task<ActionResult<TokenApiModel>> Login([FromBody] User loginModel)

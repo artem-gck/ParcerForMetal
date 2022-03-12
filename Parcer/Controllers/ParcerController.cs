@@ -11,14 +11,15 @@ namespace Parcer.Controllers
     {
         private readonly IMetalManager _metalService;
         private readonly ITokenManager _tokenService;
+        private readonly string _headerName;
 
-        public ParcerController(IMetalManager metalService, ITokenManager tokenService)
-            => (_metalService, _tokenService) = (metalService, tokenService);
+        public ParcerController(IMetalManager metalService, ITokenManager tokenService, IConfiguration configuration)
+            => (_metalService, _tokenService, _headerName) = (metalService, tokenService, configuration.GetSection("HeaderName").Value);
 
         [HttpPost]
         public async Task<IActionResult> CreateFromLinkAsync([FromBody] CertificateLink certificateLink)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
                 if (certificateLink is null)
                 {
@@ -36,7 +37,7 @@ namespace Parcer.Controllers
         [HttpPost("certificate")]
         public async Task<IActionResult> CreateCertificateAsync([FromBody] Certificate certificate)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
                 if (certificate is null)
                 {
@@ -54,7 +55,7 @@ namespace Parcer.Controllers
         [HttpPut("certificate/{id}")]
         public async Task<IActionResult> UpdateSertificateAsunc(Certificate certificate)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
                 var certificateId = await _metalService.UpdateCertificateAsync(certificate);
 
@@ -67,7 +68,7 @@ namespace Parcer.Controllers
         [HttpGet("certificate/{id}")]
         public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
                 var certificate = await _metalService.GetCertificateAsync(id);
 
@@ -80,7 +81,7 @@ namespace Parcer.Controllers
         [HttpGet("certificate")]
         public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsunc()
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
                 return await _metalService.GetAllCertificatesAsync();
             else
                 return Unauthorized();
@@ -89,7 +90,7 @@ namespace Parcer.Controllers
         [HttpGet("package")]
         public async Task<ActionResult<List<PackageViewModel>>> GetAllPackagesAsunc()
         {
-            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
                 return await _metalService.GetAllPackagesAsync();
             else
                 return Unauthorized();

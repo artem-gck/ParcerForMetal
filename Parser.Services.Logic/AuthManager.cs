@@ -18,12 +18,12 @@ namespace Parser.Services.Logic
 {
     public class AuthManager : IAuthManager
     {
-        private readonly ILoginAccessManager _access;
+        private readonly IAuthAccessManager _access;
         private readonly int _liveTimeAccessTokenMinutes;
         private readonly int _liveTimeRefreshTokenHours;
         private readonly string _key;
 
-        public AuthManager(ILoginAccessManager access, IConfiguration config)
+        public AuthManager(IAuthAccessManager access, IConfiguration config)
         {
             _access = access;
             _key = config.GetSection("SecreteKey").Value;
@@ -52,7 +52,7 @@ namespace Parser.Services.Logic
             userData.RefreshToken = refreshToken;
             userData.RefreshTokenExpiryTime = DateTime.Now.AddHours(_liveTimeRefreshTokenHours);
 
-            await _access.SetNewRefreshKeyAsync(user);
+            await _access.SetNewRefreshKeyAsync(userData);
 
             return new TokenApiModel()
             {

@@ -16,7 +16,7 @@ builder.Services.AddTransient<IMetalManager, MetalManager>();
 builder.Services.AddTransient<ITokenManager, TokenManager>();
 builder.Services.AddTransient<IAuthManager, AuthManager>();
 builder.Services.AddTransient<IMetalAccessManager, MetalAccessSqlServerManager>();
-builder.Services.AddTransient<ILoginAccessManager, LoginAccessManager>();
+builder.Services.AddTransient<IAuthAccessManager, AuthAccessManager>();
 
 var app = builder.Build();
 
