@@ -11,5 +11,6 @@ namespace Parser.Serviсes
     public interface ITokenManager
     {
         public Task<TokenApiModel> Refresh(TokenApiModel tokenApiModel);
+        public Task<bool> CheckAccessKey(string token);
     }
 }

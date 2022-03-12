@@ -19,17 +19,21 @@ namespace Parser.Services.Logic
     public class AuthManager : IAuthManager
     {
         private readonly ILoginAccessManager _access;
+        private readonly int _liveTimeAccessTokenMinutes;
+        private readonly int _liveTimeRefreshTokenHours;
         private readonly string _key;
 
         public AuthManager(ILoginAccessManager access, IConfiguration config)
         {
             _access = access;
             _key = config.GetSection("SecreteKey").Value;
+            _liveTimeAccessTokenMinutes = int.Parse(config.GetSection("LiveTimeAccessTokenMinutes").Value);
+            _liveTimeRefreshTokenHours = int.Parse(config.GetSection("LiveTimeRefreshTokenHours").Value);
         }
         
         public async Task<TokenApiModel> Login(User user)
         {
-            var userData = await _access.AuthUser(user.Login, user.Password);
+            var userData = await _access.AuthUserAsync(user.Login, user.Password);
 
             if (userData == null)
             {
@@ -46,9 +50,9 @@ namespace Parser.Services.Logic
             var refreshToken = GenerateRefreshToken();
 
             userData.RefreshToken = refreshToken;
-            userData.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+            userData.RefreshTokenExpiryTime = DateTime.Now.AddHours(_liveTimeRefreshTokenHours);
 
-            _access.SetNewRefreshKey(user);
+            await _access.SetNewRefreshKeyAsync(user);
 
             return new TokenApiModel()
             {
@@ -66,7 +70,7 @@ namespace Parser.Services.Logic
                 issuer: "http://localhost:5000",
                 audience: "http://localhost:5000",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(_liveTimeAccessTokenMinutes),
                 signingCredentials: signinCredentials
             );
 

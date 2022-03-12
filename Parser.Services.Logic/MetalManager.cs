@@ -9,7 +9,7 @@ namespace Parser.Services.Logic
 {
     public class MetalManager : IMetalManager
     {
-        private IMetalAccessManager _access;
+        private readonly IMetalAccessManager _access;
 
         public MetalManager(IMetalAccessManager access)
             => _access = access;

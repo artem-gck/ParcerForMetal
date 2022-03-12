@@ -16,7 +16,7 @@ namespace Parser.DataAccess.SqlServer
         public LoginAccessManager(MetalContext metalContext)
             => _context = metalContext;
 
-        public async Task<User> AuthUser(string login, string password)
+        public async Task<User> AuthUserAsync(string login, string password)
         {
             login = login is not null ? login : throw new ArgumentNullException(nameof(login));
 
@@ -30,7 +30,7 @@ namespace Parser.DataAccess.SqlServer
             return await _context.User.FirstOrDefaultAsync(user => user.Login == login);
         }
 
-        public async Task<bool> SetNewRefreshKey(User user)
+        public async Task<bool> SetNewRefreshKeyAsync(User user)
         {
             user = user is not null ? user : throw new ArgumentNullException(nameof(user));
 

@@ -9,59 +9,90 @@ namespace Parcer.Controllers
     [Route("api/parcer")]
     public class ParcerController : Controller
     {
-        private IMetalManager _service;
+        private readonly IMetalManager _metalService;
+        private readonly ITokenManager _tokenService;
 
-        public ParcerController(IMetalManager service)
-            => _service = service;
+        public ParcerController(IMetalManager metalService, ITokenManager tokenService)
+            => (_metalService, _tokenService) = (metalService, tokenService);
 
         [HttpPost]
         public async Task<IActionResult> CreateFromLinkAsync([FromBody] CertificateLink certificateLink)
         {
-            if (certificateLink is null)
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
             {
-                return NoContent();
+                if (certificateLink is null)
+                {
+                    return BadRequest();
+                }
+
+                var id = await _metalService.CreateFromLinkAsync(certificateLink);
+
+                return CreatedAtAction(nameof(CreateFromLinkAsync), id);
             }
-
-            var id = await _service.CreateFromLinkAsync(certificateLink);
-
-            return CreatedAtAction(nameof(CreateFromLinkAsync), id);
+            else
+                return Unauthorized();
         }
 
         [HttpPost("certificate")]
         public async Task<IActionResult> CreateCertificateAsync([FromBody] Certificate certificate)
         {
-            if (certificate is null)
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
             {
-                return NoContent();
+                if (certificate is null)
+                {
+                    return NoContent();
+                }
+
+                var id = await _metalService.CreateCertificateAsync(certificate);
+
+                return CreatedAtAction(nameof(CreateCertificateAsync), id);
             }
-
-            var id = await _service.CreateCertificateAsync(certificate);
-
-            return CreatedAtAction(nameof(CreateCertificateAsync), id);
+            else
+                return Unauthorized();
         }
 
         [HttpPut("certificate/{id}")]
         public async Task<IActionResult> UpdateSertificateAsunc(Certificate certificate)
-        { 
-            var certificateId = await _service.UpdateCertificateAsync(certificate);
+        {
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            {
+                var certificateId = await _metalService.UpdateCertificateAsync(certificate);
 
-            return NoContent();
+                return Ok(certificateId);
+            }
+            else
+                return Unauthorized();
         }
 
         [HttpGet("certificate/{id}")]
         public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
         {
-            var certificate = await _service.GetCertificateAsync(id);
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+            {
+                var certificate = await _metalService.GetCertificateAsync(id);
 
-            return certificate is null ? NoContent() : certificate;
+                return certificate is null ? NoContent() : certificate;
+            }
+            else
+                return Unauthorized();
         }
 
         [HttpGet("certificate")]
         public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsunc()
-            => await _service.GetAllCertificatesAsync();
+        {
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+                return await _metalService.GetAllCertificatesAsync();
+            else
+                return Unauthorized();
+        }
 
         [HttpGet("package")]
         public async Task<ActionResult<List<PackageViewModel>>> GetAllPackagesAsunc()
-            => await _service.GetAllPackagesAsync();
+        {
+            if (await _tokenService.CheckAccessKey(Request.Headers["access_key"].ToString()))
+                return await _metalService.GetAllPackagesAsync();
+            else
+                return Unauthorized();
+        }
     }
 }

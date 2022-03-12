@@ -17,12 +17,16 @@ namespace Parser.Services.Logic
     public class TokenManager : ITokenManager
     {
         private readonly string _key;
+        private readonly int _liveTimeAccessTokenMinutes;
+        private readonly int _liveTimeRefreshTokenHours;
         private readonly ILoginAccessManager _access;
 
         public TokenManager(ILoginAccessManager access, IConfiguration config)
         {
             _access = access;
             _key = config.GetSection("SecreteKey").Value;
+            _liveTimeAccessTokenMinutes = int.Parse(config.GetSection("LiveTimeAccessTokenMinutes").Value);
+            _liveTimeRefreshTokenHours = int.Parse(config.GetSection("LiveTimeRefreshTokenHours").Value);
         }
 
         public async Task<TokenApiModel> Refresh(TokenApiModel tokenApiModel)
@@ -35,15 +39,15 @@ namespace Parser.Services.Logic
             var user = await _access.GetUserAsync(userName);
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
-            {
                 return null;
-            }
 
             var newAccessToken = GenerateAccessToken(principal.Claims);
             var newRefreshToken = GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;
-            await _access.SetNewRefreshKey(user);
+            user.RefreshTokenExpiryTime = DateTime.Now.AddHours(_liveTimeRefreshTokenHours);
+
+            await _access.SetNewRefreshKeyAsync(user);
 
             return new TokenApiModel()
             {
@@ -59,8 +63,10 @@ namespace Parser.Services.Logic
                 var principal = GetPrincipalFromExpiredToken(token);
                 var username = principal.Identity.Name;
                 var user = await _access.GetUserAsync(username);
-
-                if (user is not null)
+                
+                var tokeOptions = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+                
+                if (DateTime.Now <= tokeOptions.ValidTo.AddHours(3) && user is not null)
                     return true;
                 else
                     return false;
@@ -80,7 +86,7 @@ namespace Parser.Services.Logic
                 issuer: "http://localhost:5000",
                 audience: "http://localhost:5000",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(_liveTimeAccessTokenMinutes),
                 signingCredentials: signinCredentials
             );
 
