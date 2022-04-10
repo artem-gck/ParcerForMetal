@@ -21,7 +21,7 @@ namespace Parser.Services.Logic
             return id;
         }
 
-        public async Task<int> CreateFromLinkAsync(CertificateLink link)
+        public async Task<Certificate> CreateFromLinkAsync(CertificateLink link)
         {
             var uri = new Uri(link.Link);
 
@@ -31,11 +31,11 @@ namespace Parser.Services.Logic
             nlmkHandler.Successor = metinvestHandler;
             metinvestHandler.Successor = severstalHandler;
 
-            var certificate = await nlmkHandler.HandleRequestAsync(uri);
+            return await nlmkHandler.HandleRequestAsync(uri);
 
-            var id = await _access.AddCertificateAsync(certificate);
+            //var id = await _access.AddCertificateAsync(certificate);
 
-            return id;
+            //return id;
         }
 
         public async Task<List<Certificate>> GetAllCertificatesAsync()

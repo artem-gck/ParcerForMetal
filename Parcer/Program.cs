@@ -26,7 +26,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStatusCodePages();
 app.UseRouting();
 

@@ -30,7 +30,13 @@ namespace Parser.Services.Logic
             _liveTimeAccessTokenMinutes = int.Parse(config.GetSection("LiveTimeAccessTokenMinutes").Value);
             _liveTimeRefreshTokenHours = int.Parse(config.GetSection("LiveTimeRefreshTokenHours").Value);
         }
-        
+
+        public async Task<UserInfo> GetUser(string login)
+        {
+            var user = await _access.GetUserAsync(login);
+            return user.UserInfo;
+        }
+
         public async Task<TokenApiModel> Login(User user)
         {
             var userData = await _access.AuthUserAsync(user.Login, user.Password);

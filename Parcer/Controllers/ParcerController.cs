@@ -17,7 +17,7 @@ namespace Parcer.Controllers
             => (_metalService, _tokenService, _headerName) = (metalService, tokenService, configuration.GetSection("HeaderName").Value);
 
         [HttpPost]
-        public async Task<IActionResult> CreateFromLinkAsync([FromBody] CertificateLink certificateLink)
+        public async Task<ActionResult<Certificate>> CreateFromLinkAsync([FromForm] CertificateLink certificateLink)
         {
             if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
@@ -28,8 +28,8 @@ namespace Parcer.Controllers
 
                 var id = await _metalService.CreateFromLinkAsync(certificateLink);
 
-                return CreatedAtAction(nameof(CreateFromLinkAsync), id);
-            }
+                return id;
+                }
             else
                 return Unauthorized();
         }

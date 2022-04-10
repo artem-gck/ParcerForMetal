@@ -11,7 +11,7 @@ namespace Parser.Serviсes
 {
     public interface IMetalManager
     {
-        public Task<int> CreateFromLinkAsync(CertificateLink link);
+        public Task<Certificate> CreateFromLinkAsync(CertificateLink link);
         public Task<int> CreateCertificateAsync(Certificate certificate);
         public Task<Certificate> GetCertificateAsync(int id);
         public Task<int> UpdateCertificateAsync(Certificate certificate);

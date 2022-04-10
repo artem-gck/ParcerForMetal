@@ -11,5 +11,7 @@ namespace Parser.Serviсes
     public interface IAuthManager
     {
         public Task<TokenApiModel> Login(User loginModel);
+
+        public Task<UserInfo> GetUser(string login);
     }
 }

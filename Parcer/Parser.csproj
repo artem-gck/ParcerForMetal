@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Parser.DataAccess.SqlServer\Parser.DataAccess.SqlServer.csproj" />
     <ProjectReference Include="..\Parser.DataAccess\Parser.DataAccess.csproj" />
     <ProjectReference Include="..\Parser.Services.Logic\Parser.Services.Logic.csproj" />
