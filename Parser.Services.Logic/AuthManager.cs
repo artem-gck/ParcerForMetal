@@ -34,6 +34,7 @@ namespace Parser.Services.Logic
         public async Task<UserInfo> GetUser(string login)
         {
             var user = await _access.GetUserAsync(login);
+
             return user.UserInfo;
         }
 

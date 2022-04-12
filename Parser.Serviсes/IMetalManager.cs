@@ -17,5 +17,6 @@ namespace Parser.Serviсes
         public Task<int> UpdateCertificateAsync(Certificate certificate);
         public Task<List<Certificate>> GetAllCertificatesAsync();
         public Task<List<PackageViewModel>> GetAllPackagesAsync();
+        public Task UpdateStatusPackageAsync(string batch, string statusName);
     }
 }

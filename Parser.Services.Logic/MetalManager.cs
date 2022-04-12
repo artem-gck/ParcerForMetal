@@ -54,6 +54,9 @@ namespace Parser.Services.Logic
         public async Task<int> UpdateCertificateAsync(Certificate certificate)
             => await _access.UpdateSertificateAsync(certificate);
 
+        public async Task UpdateStatusPackageAsync(string batch, string statusName)
+            => await _access.UpdateStatusPackageAsync(batch, statusName);
+
         private PackageViewModel MapPackege(Package package)
             => new PackageViewModel()
             {

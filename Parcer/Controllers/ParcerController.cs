@@ -26,10 +26,10 @@ namespace Parcer.Controllers
                     return BadRequest();
                 }
 
-                var id = await _metalService.CreateFromLinkAsync(certificateLink);
+                var certificate = await _metalService.CreateFromLinkAsync(certificateLink);
 
-                return id;
-                }
+                return certificate;
+            }
             else
                 return Unauthorized();
         }
@@ -53,7 +53,7 @@ namespace Parcer.Controllers
         }
 
         [HttpPut("certificate/{id}")]
-        public async Task<IActionResult> UpdateSertificateAsunc(Certificate certificate)
+        public async Task<IActionResult> UpdateSertificateAsync(Certificate certificate)
         {
             if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
@@ -66,7 +66,7 @@ namespace Parcer.Controllers
         }
 
         [HttpGet("certificate/{id}")]
-        public async Task<ActionResult<Certificate>> GetSertificateAsunc(int id)
+        public async Task<ActionResult<Certificate>> GetSertificateAsync(int id)
         {
             if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
             {
@@ -79,7 +79,7 @@ namespace Parcer.Controllers
         }
 
         [HttpGet("certificate")]
-        public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsunc()
+        public async Task<ActionResult<List<Certificate>>> GetAllSertificatesAsync()
         {
             if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
                 return await _metalService.GetAllCertificatesAsync();
@@ -88,10 +88,23 @@ namespace Parcer.Controllers
         }
 
         [HttpGet("package")]
-        public async Task<ActionResult<List<PackageViewModel>>> GetAllPackagesAsunc()
+        public async Task<ActionResult<List<PackageViewModel>>> GetAllPackagesAsync()
         {
             if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
                 return await _metalService.GetAllPackagesAsync();
+            else
+                return Unauthorized();
+        }
+
+        [HttpPut("package")]
+        public async Task<IActionResult> UpdateStatusPackageAsync(string batch, string status)
+        {
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+            {
+                await _metalService.UpdateStatusPackageAsync(batch, status);
+
+                return Ok();
+            }
             else
                 return Unauthorized();
         }

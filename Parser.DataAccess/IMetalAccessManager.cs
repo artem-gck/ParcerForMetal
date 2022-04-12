@@ -15,5 +15,6 @@ namespace Parser.DataAccess
         public Task<List<Certificate>> GetAllCertificatesAsync();
         public Task<int> UpdateSertificateAsync(Certificate certificate);
         public Task<List<Package>> GetAllPackegesAsync();
+        public Task UpdateStatusPackageAsync(string batch, string statusName);
     }
 }

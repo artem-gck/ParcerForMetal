@@ -152,6 +152,17 @@ namespace Parser.DataAccess.SqlServer
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateStatusPackageAsync(string batch, string statusName)
+        {
+            var status = await GetStatus(statusName);
+
+            var package = await _context.Package.Include(pac => pac.Status).FirstOrDefaultAsync(pac => pac.Batch == batch);
+
+            package.Status = status;
+
+           await _context.SaveChangesAsync();
+        }
+
         private async Task<Status> GetStatus(string name)
         {
             var status = await _context.Status.Where(status => status.StatusName == name)
