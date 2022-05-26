@@ -9,6 +9,7 @@ namespace Parser.Serviсes.ViewModel
     public class PackageViewModel
     {
         public DateTime? SupplyDate { get; set; }
+        public string Batch { get; set; }
         public string? Grade { get; set; }
         public string? NumberOfCertificate { get; set; }
         public double? Width { get; set; }

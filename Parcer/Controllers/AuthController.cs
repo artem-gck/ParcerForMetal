@@ -34,6 +34,15 @@ namespace Parser.Controllers
             return tokens;
         }
 
+        [HttpGet("check")]
+        public async Task<IActionResult> CheckToken()
+        {
+            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+                return Ok();
+            else
+                return Unauthorized();
+        }
+
         [HttpGet]
         public async Task<ActionResult<UserViewModel>> GetUser(string login)
         {

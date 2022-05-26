@@ -18,5 +18,8 @@ namespace Parser.Serviсes
         public Task<List<Certificate>> GetAllCertificatesAsync();
         public Task<List<PackageViewModel>> GetAllPackagesAsync();
         public Task UpdateStatusPackageAsync(string batch, string statusName);
+        public Task<List<PackageViewModel>> GetPackagesByStatus(string statusName);
+        public Task<int> AddPackage(Package package);
+        public Task<int> AddDeffectToPackage(Defect defect);
     }
 }

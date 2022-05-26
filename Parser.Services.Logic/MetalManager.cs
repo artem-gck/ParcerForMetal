@@ -1,4 +1,5 @@
-﻿using Parser.DataAccess;
+﻿using Newtonsoft.Json;
+using Parser.DataAccess;
 using Parser.Services.Logic.ChainOfHosts;
 using Parser.Serviсes;
 using Parser.Serviсes.Models;
@@ -13,6 +14,13 @@ namespace Parser.Services.Logic
 
         public MetalManager(IMetalAccessManager access)
             => _access = access;
+
+        public async Task<int> AddPackage(Package package)
+        {
+            var id = await _access.AddPackage(package);
+
+            return id;
+        }
 
         public async Task<int> CreateCertificateAsync(Certificate certificate)
         {
@@ -31,11 +39,26 @@ namespace Parser.Services.Logic
             nlmkHandler.Successor = metinvestHandler;
             metinvestHandler.Successor = severstalHandler;
 
-            return await nlmkHandler.HandleRequestAsync(uri);
+            var certificate =  await nlmkHandler.HandleRequestAsync(uri);
+            var cert = await _access.GetCertificateAsync(certificate.Number);
 
-            //var id = await _access.AddCertificateAsync(certificate);
+            if (cert is null)
+            {
+                var stringCert = JsonConvert.SerializeObject(certificate);
+                var certificateDb = JsonConvert.DeserializeObject<Certificate>(stringCert);
 
-            //return id;
+                certificateDb.Packages = new List<Package>();
+                
+                var id = await _access.AddCertificateAsync(certificateDb);
+
+                certificate.CertificateId = id;
+                return certificate;
+            }
+            else
+            {
+                cert.Packages = certificate.Packages;
+                return cert;
+            }
         }
 
         public async Task<List<Certificate>> GetAllCertificatesAsync()
@@ -51,16 +74,28 @@ namespace Parser.Services.Logic
         public async Task<Certificate> GetCertificateAsync(int id)
             => await _access.GetCertificateAsync(id);
 
+        public async Task<List<PackageViewModel>> GetPackagesByStatus(string statusName)
+        {
+            var packages = await _access.GetPackagesByStatus(statusName);
+            return packages.Select(pac => MapPackege(pac)).ToList();
+        }
+
         public async Task<int> UpdateCertificateAsync(Certificate certificate)
             => await _access.UpdateSertificateAsync(certificate);
 
         public async Task UpdateStatusPackageAsync(string batch, string statusName)
             => await _access.UpdateStatusPackageAsync(batch, statusName);
 
+        public async Task<int> AddDeffectToPackage(Defect defect)
+        {
+            return await _access.AddDeffectToPackage(defect);
+        }
+
         private PackageViewModel MapPackege(Package package)
-            => new PackageViewModel()
+            => new()
             {
                 SupplyDate = package.DateAdded,
+                Batch = package.Batch,
                 Grade = package.Grade,
                 NumberOfCertificate = package.Certificate.Number,
                 Width = package.Size.Width,

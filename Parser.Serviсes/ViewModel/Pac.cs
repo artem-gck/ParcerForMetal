@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Parser.Serviсes.Models.CertificateModel;
 
-namespace Parser.Serviсes.Models.CertificateModel
+namespace Parser.Serviсes.ViewModel
 {
-    public class Package
+    public class Pac
     {
-        public int PackageId { get; set; }
-        [JsonIgnore]
-        public Certificate? Certificate { get; set; }
-        public int? CertificateId { get; set; }
         public DateTime? DateAdded { get; set; }
         public DateTime? DateChange { get; set; }
         public Status? Status { get; set; }

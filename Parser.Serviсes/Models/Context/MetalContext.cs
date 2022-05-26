@@ -11,12 +11,14 @@ namespace Parser.Serviсes.Models.Context
         public MetalContext()
         {
             //Database.EnsureDeleted();
+            //Database.Migrate();
         }
 
         public MetalContext(DbContextOptions<MetalContext> options)
             : base(options)
         {
             //Database.EnsureDeleted();
+            //Database.Migrate();
         }
 
         public virtual DbSet<Certificate> Certificate { get; set; } = null!;
@@ -33,6 +35,8 @@ namespace Parser.Serviсes.Models.Context
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MetalManagment;Integrated Security=True;");
+
+
         }
     }
 }

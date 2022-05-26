@@ -81,26 +81,53 @@ namespace Parser.Services.Logic.ChainOfHosts
         {
             var package = new Package();
 
+            var quantityId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("Количество");
+            var gostId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("ГОСТ, ТУ");
+            var surfaceQualityId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Группа отделки");
+            var categoryOfDrawingId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Категория вытяжки");
+            var trimOfEdgeId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Характер кромки");
+            var temporalResistanceId = -1;
+            var temporalResistanceList = root.Elements[4].Elements[2].Elements[0].Head.ToList();
+            for (var i = 0; i < temporalResistanceList.Count; i++)
+            {
+                if (temporalResistanceList[i].Contains("соп"))
+                    temporalResistanceId = i;
+            }
+            var elongationId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Относит.удл., %");
+            var sphericalHoleDepthList = root.Elements[4].Elements[2].Elements[0].Head.ToList();
+            int sphericalHoleDepthId = -1;
+            for (var i = 0; i < sphericalHoleDepthList.Count; i++)
+            {
+                if (sphericalHoleDepthList[i].Contains("Глубина сфер. лунки"))
+                    sphericalHoleDepthId = i;
+            }
+            var microBallCemId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Мик-ра Балл цем.");
+            var r90Id = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Коэф. пл. ан., R90");
+            var n90Id = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Показ. деф. упр., n90");
+            var koafNavodoragId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Коэф. наводораж., %");
+
             package.NamberConsignmentPackage = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[1];
             package.Heat = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[2];
             package.Batch = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[0];
             package.Grade = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[6];
             package.Size = GetSize(root, id);
-            package.Quantity = int.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[9]);
+            package.Quantity = int.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[quantityId]);
             package.Variety = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[3];
-            package.Gost = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[14];
+            package.Gost = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[gostId];
             package.Weight = GetWeight(root, id);
-            package.SurfaceQuality = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[3];
-            package.CategoryOfDrawing = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[6];
-            package.TrimOfEdge = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[5];
+            package.SurfaceQuality = surfaceQualityId != -1 ? root.Elements[4].Elements[2].Elements[0].Body[id].Tr[3] : null;
+            package.CategoryOfDrawing = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[categoryOfDrawingId];
+            package.TrimOfEdge = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[trimOfEdgeId];
             package.ChemicalComposition = GetChemicalComposition(root, id);
-            package.TemporalResistance = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[8], CultureInfo.InvariantCulture);
-            package.Elongation = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[9], CultureInfo.InvariantCulture);
-            package.SphericalHoleDepth = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[10], CultureInfo.CurrentCulture);
-            package.MicroBallCem = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[15], CultureInfo.InvariantCulture);
-            package.R90 = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[17], CultureInfo.InvariantCulture);
-            package.N90 = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[18], CultureInfo.InvariantCulture);
-            package.KoafNavodorag = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[19], CultureInfo.InvariantCulture);
+            package.TemporalResistance = temporalResistanceId != -1 ? double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[temporalResistanceId] + ".0", CultureInfo.InvariantCulture) : null;
+            package.Elongation = double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[elongationId] + ".0", CultureInfo.InvariantCulture);
+            double sphericalHoleDepth = -1;
+            double.TryParse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[sphericalHoleDepthId], NumberStyles.Any, CultureInfo.CurrentCulture, out sphericalHoleDepth);
+            package.SphericalHoleDepth = sphericalHoleDepth == 0 ? null : sphericalHoleDepth;
+            package.MicroBallCem = microBallCemId != -1 ? double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[microBallCemId], CultureInfo.InvariantCulture) : null;
+            package.R90 = r90Id != -1 ? double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[r90Id], CultureInfo.InvariantCulture) : null;
+            package.N90 = n90Id != -1 ? double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[n90Id], CultureInfo.InvariantCulture) : null;
+            package.KoafNavodorag = koafNavodoragId != -1 ? double.Parse(root.Elements[4].Elements[2].Elements[0].Body[id].Tr[koafNavodoragId], CultureInfo.InvariantCulture) : null;
 
             return package;
         }
@@ -109,8 +136,10 @@ namespace Parser.Services.Logic.ChainOfHosts
         {
             var size = new Size();
 
-            size.Width = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[8][7..], CultureInfo.InvariantCulture);
-            size.Thickness = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[8][..4], CultureInfo.InvariantCulture);
+            var sizeId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("Размеры, мм");
+
+            size.Width = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[sizeId][7..], CultureInfo.InvariantCulture);
+            size.Thickness = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[sizeId][..4], CultureInfo.InvariantCulture);
 
             return size;
         }
@@ -119,8 +148,11 @@ namespace Parser.Services.Logic.ChainOfHosts
         {
             var weight = new Weight();
 
-            weight.Gross = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[11], CultureInfo.InvariantCulture);
-            weight.Net = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[10], CultureInfo.InvariantCulture);
+            var grossId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("Масса брутто, Т");
+            var netId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("Масса нетто, Т");
+
+            weight.Gross = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[grossId], CultureInfo.InvariantCulture) * 1000;
+            weight.Net = double.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[netId], CultureInfo.InvariantCulture) * 1000;
 
             return weight;
         }
@@ -129,18 +161,29 @@ namespace Parser.Services.Logic.ChainOfHosts
         {
             var chemical = new ChemicalComposition();
 
-            chemical.C = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[3], CultureInfo.InvariantCulture);
-            chemical.Si = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[4], CultureInfo.InvariantCulture);
-            chemical.Mn = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[5], CultureInfo.InvariantCulture);
-            chemical.S = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[6], CultureInfo.InvariantCulture);
-            chemical.P = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[7], CultureInfo.InvariantCulture);
-            chemical.Al = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[8], CultureInfo.InvariantCulture);
-            chemical.Cr = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[9], CultureInfo.InvariantCulture);
-            chemical.Ni = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[10], CultureInfo.InvariantCulture);
-            chemical.Cu = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[11], CultureInfo.InvariantCulture);
-            chemical.Ti = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[12], CultureInfo.InvariantCulture);
-            chemical.V = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[14], CultureInfo.InvariantCulture);
-            chemical.N2 = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[15], CultureInfo.InvariantCulture);
+            var cId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("C");
+            var siId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Si");
+            var mnId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Mn");
+            var sId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("S");
+            var pId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("P");
+            var alId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Al");
+            var crId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Cr");
+            var niId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Ni");
+            var cuId = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("Cu");
+            var n2Id = root.Elements[4].Elements[1].Elements[0].Head.IndexOf("N2");
+
+            chemical.C = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[cId], CultureInfo.InvariantCulture);
+            chemical.Si = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[siId], CultureInfo.InvariantCulture);
+            chemical.Mn = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[mnId], CultureInfo.InvariantCulture);
+            chemical.S = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[siId], CultureInfo.InvariantCulture);
+            chemical.P = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[pId], CultureInfo.InvariantCulture);
+            chemical.Al = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[alId], CultureInfo.InvariantCulture);
+            chemical.Cr = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[crId], CultureInfo.InvariantCulture);
+            chemical.Ni = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[niId], CultureInfo.InvariantCulture);
+            chemical.Cu = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[cuId], CultureInfo.InvariantCulture);
+            //chemical.Ti = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[12], CultureInfo.InvariantCulture);
+            //chemical.V = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[14], CultureInfo.InvariantCulture);
+            chemical.N2 = double.Parse("0" + root.Elements[4].Elements[1].Elements[0].Body[id].Tr[n2Id], CultureInfo.InvariantCulture);
 
             return chemical;
         }
