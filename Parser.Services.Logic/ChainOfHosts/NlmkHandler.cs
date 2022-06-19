@@ -49,9 +49,9 @@ namespace Parser.Services.Logic.ChainOfHosts
             var certificate = new Certificate();
 
             certificate.Link = link.AbsoluteUri;
+            certificate.Author = "НЛМК";
             certificate.Number = root.Elements[1].Elements[0].Value.ToString()[13..19];
-            certificate.Date = DateTime.Parse(root.Elements[1].Elements[0].Value.ToString()[22..33]);
-            certificate.WagonNumber = root.Elements[5].Elements[1].Value.ToString();
+            certificate.Date = DateTime.SpecifyKind(DateTime.Parse(root.Elements[1].Elements[0].Value.ToString()[22..33]), DateTimeKind.Utc);
             certificate.Product = GetProduct(root);
             certificate.ShipmentShop = root.Elements[5].Elements[0].Value.ToString();
             certificate.WagonNumber = root.Elements[5].Elements[1].Value.ToString();
@@ -105,11 +105,12 @@ namespace Parser.Services.Logic.ChainOfHosts
             var r90Id = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Коэф. пл. ан., R90");
             var n90Id = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Показ. деф. упр., n90");
             var koafNavodoragId = root.Elements[4].Elements[2].Elements[0].Head.IndexOf("Коэф. наводораж., %");
+            var gradeId = root.Elements[4].Elements[0].Elements[0].Head.IndexOf("Марка стали");
 
             package.NamberConsignmentPackage = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[1];
             package.Heat = root.Elements[4].Elements[1].Elements[0].Body[id].Tr[2];
             package.Batch = root.Elements[4].Elements[2].Elements[0].Body[id].Tr[0];
-            package.Grade = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[6];
+            package.Grade = gradeId != -1 ? root.Elements[4].Elements[0].Elements[0].Body[id].Tr[6] : "-";
             package.Size = GetSize(root, id);
             package.Quantity = int.Parse(root.Elements[4].Elements[0].Elements[0].Body[id].Tr[quantityId]);
             package.Variety = root.Elements[4].Elements[0].Elements[0].Body[id].Tr[3];

@@ -20,7 +20,10 @@ namespace Parser.DataAccess.SqlServer
         {
             login = login is not null ? login : throw new ArgumentNullException(nameof(login));
 
-            return await _context.User.FirstOrDefaultAsync(user => user.Login == login && user.Password == password);
+            var a = await _context.User.ToListAsync();
+
+            return await _context.User.Include(us => us.UserInfo)
+                                      .FirstOrDefaultAsync(user => user.Login == login && user.Password == password);
         }
 
         public async Task<User> GetUserAsync(string login)
@@ -38,7 +41,7 @@ namespace Parser.DataAccess.SqlServer
             var userData = await _context.User.FirstOrDefaultAsync(userData => userData.Login == user.Login);
 
             userData.RefreshToken = user.RefreshToken;
-            userData.RefreshTokenExpiryTime = user.RefreshTokenExpiryTime;
+            userData.RefreshTokenExpiryTime = DateTime.SpecifyKind((DateTime)user.RefreshTokenExpiryTime, DateTimeKind.Utc);
 
             await _context.SaveChangesAsync();
 

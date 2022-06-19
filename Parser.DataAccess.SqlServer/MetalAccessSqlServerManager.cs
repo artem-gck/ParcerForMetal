@@ -42,6 +42,26 @@ namespace Parser.DataAccess.SqlServer
             return cert.OriginalValues.GetValue<int>("CertificateId");
         }
 
+        public async Task<Certificate> CheckSertificateAsync(string link)
+        {
+            await UpdateStatus();
+
+            var certificate = await _context.Certificate.Include(cert => cert.Product)
+                                                        .Include(cert => cert.Packages)
+                                                            .ThenInclude(pac => pac.Size)
+                                                        .Include(cert => cert.Packages)
+                                                            .ThenInclude(pac => pac.Weight)
+                                                        .Include(cert => cert.Packages)
+                                                            .ThenInclude(pac => pac.ChemicalComposition)
+                                                        .Include(cert => cert.Packages)
+                                                            .ThenInclude(pac => pac.ImpactStrength)
+                                                        .Include(cert => cert.Packages)
+                                                            .ThenInclude(pac => pac.Status)
+                                                        .FirstOrDefaultAsync(cert => cert.Link == link);
+
+            return certificate;
+        }
+
         public async Task<List<Certificate>> GetAllCertificatesAsync()
         {
             //_context.Database.Migrate();
@@ -161,11 +181,11 @@ namespace Parser.DataAccess.SqlServer
             return packeges;
         }
 
-        public async Task UpdateStatusPackageAsync(string batch, string statusName)
+        public async Task UpdateStatusPackageAsync(string batch, int statusId)
         {
             await UpdateStatus();
 
-            var status = await GetStatus(statusName);
+            var status = await _context.Status.FindAsync(statusId);
 
             var package = await _context.Package.Include(pac => pac.Status).FirstOrDefaultAsync(pac => pac.Batch == batch);
 
@@ -175,26 +195,132 @@ namespace Parser.DataAccess.SqlServer
             await _context.SaveChangesAsync();
         }
 
+        public async Task<int> AddPackage(Package package)
+        {
+            package.DateAdded = DateTime.UtcNow;
+            package.DateChange = DateTime.UtcNow;
+            package.Status = await GetStatus("Имеется");
+
+            var pace = await _context.Package.Include(pac => pac.Weight)
+                .Include(pac => pac.Size).FirstOrDefaultAsync(p => p.Batch == package.Batch);
+
+            if (pace is null)
+            {
+                var pac = await _context.Package.AddAsync(package);
+                await _context.SaveChangesAsync();
+
+                await UpdateStatus();
+
+                return pac.OriginalValues.GetValue<int>("PackageId");
+            }
+            else
+            {
+                pace.Grade = package.Grade;
+                pace.Size.Thickness = package.Size.Thickness;
+                pace.Size.Width = package.Size.Width;
+                pace.Weight.Gross = package.Weight.Gross;
+
+                await _context.SaveChangesAsync();
+
+                await UpdateStatus();
+
+                return pace.PackageId;
+            }
+        }
+
+        public async Task<int> AddPackageAsync(string numberOfCert, Package package)
+        {
+            package.DateChange = DateTime.Now;
+            package.Status = await GetStatus("Имеется");
+
+            var cert = await _context.Certificate.FirstOrDefaultAsync(cert => cert.Number == numberOfCert);
+            package.Certificate = cert;
+
+            var id = await _context.Package.AddAsync(package);
+            await _context.SaveChangesAsync();
+            return id.Entity.PackageId;
+        }
+
+        public async Task<Package> GetPackage(int packageId)
+        {
+            var package = await _context.Package.Include(pac => pac.ChemicalComposition)
+                                                .Include(pac => pac.ImpactStrength)
+                                                .Include(pac => pac.Size)
+                                                .Include(pac => pac.Weight)
+                                                .Include(pac => pac.Status)
+                                                .Include(pac => pac.Certificate)
+                                                .FirstOrDefaultAsync(pac => pac.PackageId == packageId);
+
+            return package;
+        }
+
+        public async Task<int> AddDeffectToPackage(Defect defect)
+        {
+            var package = await _context.Package.FirstOrDefaultAsync(pac => pac.Batch == defect.Batch);
+
+            package.Photo = defect.Photo.ToArray();
+            package.Comment = defect.Comment;
+            package.Status = await GetStatus("С дефектом");
+
+            _context.SaveChangesAsync();
+
+            return package.PackageId;
+        }
+
+        public async Task<int> UpdatePackageAsync(Package package)
+        {
+            var packageDb = await _context.Package.Include(pac => pac.ChemicalComposition)
+                                     .Include(pac => pac.ImpactStrength)
+                                     .Include(pac => pac.Size)
+                                     .Include(pac => pac.Weight)
+                                     .Include(pac => pac.Status)
+                                     .Include(pac => pac.Certificate)
+                                     .FirstOrDefaultAsync(pac => pac.PackageId == package.PackageId);
+
+            packageDb.Weight.Net = package.Weight.Net;
+            packageDb.Weight.Gross = package.Weight.Gross;
+            packageDb.Batch = package.Batch;
+            packageDb.Grade = package.Grade;
+            packageDb.Certificate.Author = package.Certificate.Author;
+            packageDb.Elongation = package.Elongation;
+            packageDb.Size.Thickness = package.Size.Thickness;
+            packageDb.Size.Width = package.Size.Width;
+            packageDb.Price = package.Price;
+            packageDb.Comment = package.Comment;
+
+            await _context.SaveChangesAsync();
+
+            return packageDb.PackageId;
+            //_package.NumberOfCertificate = tbNumberCertificate.Text;
+        }
+
+        public async Task<List<string>> GetNumbersOfCertificates()
+        {
+            return await _context.Certificate.Select(cert => cert.Number).ToListAsync();
+        }
+
         private async Task UpdateStatus()
         {
             var statusProcessing = await GetStatus("В обработке");
             var statusUses = await GetStatus("Использован");
 
+            //var a = await _context.Package.ToListAsync();
+
             var packagesDelete = _context.Package.Where(pac => pac.Status == statusUses)
                                                  .Where(pac => pac.DateChange != null)
-                                                 .Where(pac => pac.DateChange <= DateTime.Now.AddDays(-UpdateTimeDays));
+                                                 .Where(pac => pac.DateChange <= DateTime.SpecifyKind(DateTime.Now.AddDays(-UpdateTimeDays), DateTimeKind.Utc));
            
             _context.Package.RemoveRange(packagesDelete);
 
             var packagesUpdate = _context.Package.Where(pac => pac.Status == statusProcessing)
                                                  .Where(pac => pac.DateChange != null)
-                                                 .Where(pac => pac.DateChange <= DateTime.Now.AddHours(-UpdateTimeHours))
+                                                 .Where(pac => pac.DateChange <= DateTime.SpecifyKind(DateTime.Now.AddHours(-UpdateTimeHours), DateTimeKind.Utc))
                                                  .ToList();
 
             for (var i = 0; i < packagesUpdate.Count; i++)
             {
                 packagesUpdate[i].Status = statusUses;
-                packagesUpdate[i].DateChange = DateTime.Now;
+                packagesUpdate[i].DateChange = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
             }
 
             await _context.SaveChangesAsync();
@@ -229,52 +355,6 @@ namespace Parser.DataAccess.SqlServer
             }
 
             return status;
-        }
-
-        public async Task<int> AddPackage(Package package)
-        {
-            package.DateAdded = DateTime.Now;
-            package.DateChange = DateTime.Now;
-            package.Status = await GetStatus("Имеется");
-
-            var pace = await _context.Package.Include(pac => pac.Weight)
-                .Include(pac => pac.Size).FirstOrDefaultAsync(p => p.Batch == package.Batch);
-
-            if (pace is null)
-            {
-                var pac = await _context.Package.AddAsync(package);
-                await _context.SaveChangesAsync();
-
-                await UpdateStatus();
-
-                return pac.OriginalValues.GetValue<int>("PackageId");
-            }
-            else
-            {
-                pace.Grade = package.Grade;
-                pace.Size.Thickness = package.Size.Thickness;
-                pace.Size.Width = package.Size.Width;
-                pace.Weight.Gross = package.Weight.Gross;
-
-                await _context.SaveChangesAsync();
-
-                await UpdateStatus();
-
-                return pace.PackageId;
-            }
-        }
-
-        public async Task<int> AddDeffectToPackage(Defect defect)
-        {
-            var package = await _context.Package.FirstOrDefaultAsync(pac => pac.Batch == defect.Batch);
-
-            package.Photo = defect.Photo.ToArray();
-            package.Comment = defect.Comment;
-            package.Status = await GetStatus("С дефектом");
-
-            _context.SaveChangesAsync();
-
-            return package.PackageId;
         }
     }
 }

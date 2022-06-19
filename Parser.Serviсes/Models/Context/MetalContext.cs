@@ -34,9 +34,7 @@ namespace Parser.Serviсes.Models.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=MetalManagment;Integrated Security=True;");
-
-
+            optionsBuilder.UseNpgsql(@"Host=localhost;Database=MetalManagment;Username=postgres;Password=admin;");
         }
     }
 }

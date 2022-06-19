@@ -74,5 +74,6 @@ namespace Parser.Serviсes.Models.CertificateModel
         public string? Notes { get; set; }
         public byte[]? Photo { get; set; }
         public string? Comment { get; set; }
+        public double? Price { get; set; }
     }
 }
