@@ -26,5 +26,5 @@ RUN dotnet publish "Parser.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-#ENTRYPOINT ["dotnet", "Parser.dll"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet Parser.dll
+ENTRYPOINT ["dotnet", "Parser.dll"]
+#CMD ASPNETCORE_URLS=http://*:$PORT dotnet Parser.dll
