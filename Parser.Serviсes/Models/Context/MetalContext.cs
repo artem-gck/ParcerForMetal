@@ -34,7 +34,25 @@ namespace Parser.Serviсes.Models.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"Host=localhost;Database=MetalManagment;Username=postgres;Password=admin;");
+            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            connectionUrl = connectionUrl.Replace("postgres://", string.Empty);
+            var userPassSide = connectionUrl.Split("@")[0];
+            var hostSide = connectionUrl.Split("@")[1];
+
+            var user = userPassSide.Split(":")[0];
+            var password = userPassSide.Split(":")[1];
+            var host = hostSide.Split("/")[0];
+            var database = hostSide.Split("/")[1].Split("?")[0];
+
+            var defaultConnectionString = $"Host={host};Database={database};Username={user};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+
+            optionsBuilder.UseNpgsql(defaultConnectionString);
+
+            //optionsBuilder.UseNpgsql("Host=localhost;Database=MetalManagment;Username=postgres;Password=admin");
+
+            //Database.EnsureDeleted();
+            //Database.Migrate();
         }
     }
 }
