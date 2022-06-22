@@ -90,18 +90,18 @@ namespace Parcer.Controllers
                 return Unauthorized();
         }
 
-        [HttpPut("certificate/{id}")]
-        public async Task<IActionResult> UpdateSertificateAsync(Certificate certificate)
-        {
-            if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
-            {
-                var certificateId = await _metalService.UpdateCertificateAsync(certificate);
+        //[HttpPut("certificate/{id}")]
+        //public async Task<IActionResult> UpdateSertificateAsync(Certificate certificate)
+        //{
+        //    if (await _tokenService.CheckAccessKey(Request.Headers[_headerName].ToString()))
+        //    {
+        //        var certificateId = await _metalService.UpdateCertificateAsync(certificate);
 
-                return Ok(certificateId);
-            }
-            else
-                return Unauthorized();
-        }
+        //        return Ok(certificateId);
+        //    }
+        //    else
+        //        return Unauthorized();
+        //}
 
         [HttpGet("certificate/{id}")]
         public async Task<ActionResult<Certificate>> GetSertificateAsync(int id)
