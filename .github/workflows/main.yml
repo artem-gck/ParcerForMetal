@@ -17,6 +17,6 @@ jobs:
             HEROKU_API_KEY: $
             HEROKU_APP_NAME: $
           run: |
-                docker login --username=_ --password=$Heroku_API_KEY registry.Heroku.com
+                docker login --username=_ --password-stdin registry.Heroku.com
                 Heroku container:push web -a $HEROKU_APP_NAME
                 Heroku container:release web -a $HEROKU_APP_NAME
