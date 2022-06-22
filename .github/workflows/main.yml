@@ -20,5 +20,5 @@ jobs:
             HEROKU_APP_NAME: $
           run: |
                 docker login --username=_ --password="6501042c-efeb-45e9-8ad2-2e3d264c394c" registry.heroku.com
-                heroku container:push web -a $HEROKU_APP_NAME
+                heroku container:push web -a "parcer-dotnet"
                 heroku container:release web -a $HEROKU_APP_NAME
