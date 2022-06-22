@@ -18,6 +18,7 @@ jobs:
             HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
           run: |
                 docker login --username=_ --password="6501042c-efeb-45e9-8ad2-2e3d264c394c" registry.heroku.com
+                docker images
                 docker tag 440a9ab37fbe registry.heroku.com/parcer-dotnet/web
                 docker push registry.heroku.com/parcer-dotnet/web
                 heroku container:release web -a $HEROKU_APP_NAME
