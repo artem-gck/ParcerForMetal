@@ -34,7 +34,7 @@ namespace Parser.Serviсes.Models.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var connectionUrl = /*Environment.GetEnvironmentVariable("DATABASE_URL");*/ "postgres://pcgeuxxctxtdrg:4389638e9b54fbea09186de13cc5b2563f9120bcfd3afe245d4cacf2cdcf9a75@ec2-52-212-228-71.eu-west-1.compute.amazonaws.com:5432/d7bm7ameohjgqa";
 
             connectionUrl = connectionUrl.Replace("postgres://", string.Empty);
             var userPassSide = connectionUrl.Split("@")[0];
